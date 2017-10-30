@@ -1,6 +1,14 @@
 package com.xinwei.orderDb.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * Model class of order_flow_stepDef.
@@ -10,6 +18,9 @@ import java.io.Serializable;
  */
 public class OrderFlowStepdef implements Serializable {
 
+	
+	static public final String Step_out_Default="default";
+	Logger logger = LoggerFactory.getLogger(OrderFlowStepdef.class);
 	/** serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
@@ -42,7 +53,122 @@ public class OrderFlowStepdef implements Serializable {
 
 	/** 任务重做次数. */
 	private String retryTimes;
-
+	/**
+	 * 定义执行完任务失败后根据返回数值控制状态跳转，这个字段需要填写表格，以；分割行，以，分割列
+格式如下：
+错误码支持区间配置；支持离散的；
+类型(0-单值，1-区间，2-离散数值)返回数值错误码,步骤,是否通知运维(0--不通知，其余通知）;
+	 */
+	private Map<String,StepJumpDef> stepMaps = new HashMap<String,StepJumpDef>();
+	
+	private List<StepJumpDef> stepLists = new ArrayList<StepJumpDef>();
+	
+	protected void setStepJumpDefs(String strStr)
+	{
+		//获取多个strStepJumpDefs
+		try {
+			String[] strStepJumpDefs= StringUtils.split(strStr, ";");
+			if(strStepJumpDefs==null)
+			{
+				logger.error("init StepJumpDefs error:" + this.toString());
+				System.exit(0);
+			}
+			for(int i=0;i<strStepJumpDefs.length;i++)
+			{
+				
+				String[] strStepJumpDefInfo = StringUtils.split(strStepJumpDefs[i], ",");
+				if(strStepJumpDefInfo==null||strStepJumpDefInfo.length<4)
+				{
+					logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStepJumpDefs[i]);
+					System.exit(0);
+				}
+				int category = Integer.parseInt(strStepJumpDefInfo[0]);
+				//单值
+				if(category ==StepJumpDef.Category_Single)
+				{
+					StepJumpDef stepJumpDef = new StepJumpDef();
+					stepJumpDef.setCategory(category);
+					if(Step_out_Default.compareToIgnoreCase(strStepJumpDefInfo[1].trim())==0)
+					{
+						this.stepMaps.put(Step_out_Default, stepJumpDef);
+					}
+					else
+					{
+						stepJumpDef.setStartResult(Integer.parseInt(strStepJumpDefInfo[1]));
+						this.stepMaps.put(strStepJumpDefInfo[1].trim(), stepJumpDef);
+					}
+					stepJumpDef.setNextStep(strStepJumpDefInfo[2]);
+					
+					stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[3]));
+					
+					
+				}
+				else if(category ==StepJumpDef.Category_discrete)
+				{
+					for(int j=1;j<strStepJumpDefInfo.length-2;j++)
+					{
+						StepJumpDef stepJumpDef = new StepJumpDef();
+						stepJumpDef.setCategory(category);
+						stepJumpDef.setStartResult(Integer.parseInt(strStepJumpDefInfo[j]));
+						stepJumpDef.setNextStep(strStepJumpDefInfo[strStepJumpDefInfo.length-2]);
+						
+						stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[strStepJumpDefInfo.length-1]));
+						
+						this.stepMaps.put(strStepJumpDefInfo[j].trim(), stepJumpDef);
+					}
+				} 
+				else if(category ==StepJumpDef.Category_Range)
+				{
+					StepJumpDef stepJumpDef = new StepJumpDef();
+					stepJumpDef.setCategory(category);
+					stepJumpDef.setStartResult(Integer.parseInt(strStepJumpDefInfo[1]));
+					stepJumpDef.setStartResult(Integer.parseInt(strStepJumpDefInfo[2]));
+					
+					stepJumpDef.setNextStep(strStepJumpDefInfo[strStepJumpDefInfo.length-2]);
+					
+					stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[strStepJumpDefInfo.length-1]));
+					
+					this.stepLists.add(stepJumpDef);
+				}
+				else
+				{
+					logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStepJumpDefs[i]);
+					System.exit(0);
+				}
+				
+				
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStr);
+			System.exit(0);
+		}
+	}
+	/**
+	 * 根据结果获取步骤跳转定义；
+	 * @param result
+	 * @return
+	 */
+	public StepJumpDef getStepJumpDef(int result)
+	{
+		String key = String.valueOf(result);
+		if(this.stepMaps.containsKey(key))
+		{
+			return stepMaps.get(key);
+		}
+		for(int i=0;i<this.stepLists.size();i++)
+		{
+			StepJumpDef stepJumpDef = stepLists.get(i);
+			if(result>=stepJumpDef.getStartResult() && result<=stepJumpDef.getEndResult())
+			{
+				return stepJumpDef;
+			}
+		}
+		return stepMaps.get(this.Step_out_Default);
+		
+	}
+	
 	/**
 	 * Constructor.
 	 */
@@ -133,6 +259,7 @@ public class OrderFlowStepdef implements Serializable {
 	 */
 	public void setTaskOutError(String taskOutError) {
 		this.taskOutError = taskOutError;
+		setStepJumpDefs(taskOutError);
 	}
 
 	/**
@@ -152,6 +279,7 @@ public class OrderFlowStepdef implements Serializable {
 	 */
 	public void setTaskOutSucc(String taskOutSucc) {
 		this.taskOutSucc = taskOutSucc;
+		setStepJumpDefs(taskOutSucc);
 	}
 
 	/**
@@ -171,6 +299,9 @@ public class OrderFlowStepdef implements Serializable {
 	 */
 	public void setTaskOutDefault(String taskOutDefault) {
 		this.taskOutDefault = taskOutDefault;
+		
+		this.setStepJumpDefs(taskOutDefault);
+		
 	}
 
 	/**
