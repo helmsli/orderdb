@@ -12,7 +12,7 @@
 	<category_index>0</category_index>
 	<zoom>1.0</zoom>
 	<x>0</x>
-	<y>0</y>
+	<y>133</y>
 	<default_color>
 		<r>128</r>
 		<g>128</g>
@@ -135,7 +135,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-10-07 11:09:59</creation_date>
-			<updated_date>2017-10-27 13:36:07</updated_date>
+			<updated_date>2017-10-31 09:25:16</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
@@ -647,7 +647,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>注释参见task_out_error</description>
+			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,default,下一步的步骤，是否通知运维；&#x0D;&#x0A;</description>
 			<logical_name>失败后如果没有配置错误码，调用该请求</logical_name>
 			<physical_name>task_out_default</physical_name>
 			<type>varchar(n)</type>
@@ -663,7 +663,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>定义执行完任务失败后根据返回数值控制状态跳转，这个字段需要填写表格，以；分割行，以，分割列&#x0D;&#x0A;格式如下：&#x0D;&#x0A;错误码支持区间配置；支持离散的；&#x0D;&#x0A;类型(0-单值，1-区间，2-离散数值)返回数值错误码,步骤,是否通知运维(0--不通知，其余通知）;&#x0D;&#x0A;</description>
+			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;具体如下：&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,返回值,下一步的步骤，是否通知运维；&#x0D;&#x0A;离散的格式：&#x0D;&#x0A;2，离散数值1，离散数值2，离散数值n,下一步的步骤，是否通知运维；&#x0D;&#x0A;区间的格式；&#x0D;&#x0A;1，区间开始数值，区间结束数值，下一步的步骤，是否通知运维；&#x0D;&#x0A;&#x0D;&#x0A;</description>
 			<logical_name>任务执行后失败的步骤定义</logical_name>
 			<physical_name>task_out_error</physical_name>
 			<type>varchar(n)</type>
@@ -679,7 +679,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>定义执行完任务成功后根据返回数值控制状态跳转&#x0D;&#x0A;格式如下：&#x0D;&#x0A;&#x0D;&#x0A;0,步骤;&#x0D;&#x0A;</description>
+			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;具体如下：&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,返回值,下一步的步骤，是否通知运维；&#x0D;&#x0A;</description>
 			<logical_name>任务执行成功后的步骤定义</logical_name>
 			<physical_name>task_out_succ</physical_name>
 			<type>varchar(n)</type>

@@ -75,6 +75,9 @@ public class OrderMain implements Serializable {
 	 */
 	public OrderMain() {
 	}
+	
+	
+	
 
 	/**
 	 * Set the 分区ID.

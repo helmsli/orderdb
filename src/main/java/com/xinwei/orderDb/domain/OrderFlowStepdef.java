@@ -67,7 +67,13 @@ public class OrderFlowStepdef implements Serializable {
 	{
 		//获取多个strStepJumpDefs
 		try {
-			String[] strStepJumpDefs= StringUtils.split(strStr, ";");
+			String strSource = strStr;
+			if(strStr.trim().endsWith(";"))
+			{
+				strSource = strStr.substring(0,strStr.length()-1);
+			}
+			
+			String[] strStepJumpDefs= StringUtils.split(strSource, ";");
 			if(strStepJumpDefs==null)
 			{
 				logger.error("init StepJumpDefs error:" + this.toString());
@@ -165,6 +171,13 @@ public class OrderFlowStepdef implements Serializable {
 				return stepJumpDef;
 			}
 		}
+		return stepMaps.get(this.Step_out_Default);
+		
+	}
+	
+	public StepJumpDef getDefaultStepJumpDef()
+	{
+		
 		return stepMaps.get(this.Step_out_Default);
 		
 	}
