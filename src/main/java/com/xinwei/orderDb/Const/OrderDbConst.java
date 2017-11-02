@@ -18,7 +18,7 @@ public class OrderDbConst {
     /**
      * 操作成功
      */
-    public static final int RESULT_SUCCESS = 6001;
+    public static final int RESULT_SUCCESS = 0;
     
     /**
      * 操作失败

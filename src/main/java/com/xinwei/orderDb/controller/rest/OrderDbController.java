@@ -20,6 +20,14 @@ import com.xinwei.orderDb.domain.OrderMainContext;
 import com.xinwei.orderDb.domain.StepJumpingRequest;
 import com.xinwei.orderDb.service.OrderService;
 
+/**
+ * @author herui
+ *
+ */
+/**
+ * @author herui
+ *
+ */
 @RestController
 @RequestMapping("/orderDb")
 public class OrderDbController {
@@ -45,10 +53,12 @@ public class OrderDbController {
 
 			if (orderMainContext.getContextDatas() == null) {
 				processResult = orderService.createNewOrder(orderMainContext);
+				toJsonProcessResult(processResult);
 				return processResult;
 			}
 			Map<String, String> contextDatas = orderMainContext.getContextDatas();
 			processResult = orderService.createNewOrder(orderMainContext, contextDatas);
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -74,7 +84,7 @@ public class OrderDbController {
 		try {
 
 			processResult = orderService.configOrderFlow(orderFlow);
-
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -110,6 +120,30 @@ public class OrderDbController {
 
 			processResult = orderService.stepJumping(preOrderFlow, nextOrderFlow, nextOrderAutoRun, orderId,
 					preOrderAutoRun);
+			toJsonProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+
+		}
+		return processResult;
+	}
+
+	/**
+	 * 跟距orderId查詢orderMain
+	 * 
+	 * @param dbId
+	 * @param orderId
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/getOrderMainFromDb")
+	public ProcessResult getOrderMainFromDb(@PathVariable String dbId, @PathVariable String orderId) {
+		ProcessResult processResult = new ProcessResult();
+		try {
+
+			processResult = orderService.getOrderMainFromDb(orderId);
+			this.toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -138,7 +172,7 @@ public class OrderDbController {
 			 */
 
 			processResult = orderService.updateStepStatus(orderFlow);
-
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -154,7 +188,7 @@ public class OrderDbController {
 	 * @param dbId
 	 * @param orderId
 	 * @param orderMain
-	 * @return
+	 * @return 
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/updateMainOrder")
 	public ProcessResult updateMainOrder(@PathVariable String dbId, @PathVariable String orderId,
@@ -162,7 +196,7 @@ public class OrderDbController {
 		ProcessResult processResult = new ProcessResult();
 		try {
 			processResult = orderService.updateMainOrder(orderMain);
-
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -180,16 +214,17 @@ public class OrderDbController {
 	 * @param contextKeys
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/getContextData")
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/getContextData")
 	public ProcessResult getContextData(@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody JsonRequest jsonRequest) {
 		ProcessResult processResult = new ProcessResult();
 		try {
 			String jsonString = jsonRequest.getJsonString();
 			Map<String, List<String>> jsonMap = JsonUtil.fromJson(jsonString);
+			
 			List<String> contextKeys = jsonMap.get("contextKeys");
 			processResult = orderService.getContextData(orderId, contextKeys);
-
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -213,7 +248,7 @@ public class OrderDbController {
 		try {
 
 			processResult = orderService.putContextData(orderId, orderMainContext.getContextDatas());
-
+			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -229,10 +264,10 @@ public class OrderDbController {
 	 * @param category
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "{dbId}/{orderId}/{category}/{ownerKey}/getOrderDef")
+	@RequestMapping(method = RequestMethod.GET, value = "{category}/{ownerKey}/getOrderDef")
 	public ProcessResult getOrderDef(@PathVariable String category) {
 		ProcessResult processResult = orderService.getOrderDef(category);
-
+		toJsonProcessResult(processResult);
 		return processResult;
 	}
 
@@ -241,14 +276,48 @@ public class OrderDbController {
 	 * 
 	 * @param category
 	 * @return
+	 * 
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "{dbId}/{orderId}/{category}/{ownerKey}/getOrderStepDef")
+	@RequestMapping(method = RequestMethod.GET, value = "{category}/{ownerKey}/getOrderStepDef")
 	public ProcessResult getOrderStepDef(@PathVariable String category) {
 
 		ProcessResult processResult = orderService.getOrderStepDef(category);
-		String orderStepDefs = JsonUtil.toJson(processResult.getResponseInfo());
-		processResult.setResponseInfo(orderStepDefs);
+		toJsonProcessResult(processResult);
 		return processResult;
+	}
+
+	
+	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/selectOrderFlow")
+	public ProcessResult selectOrderFlow(@PathVariable String dbId, @PathVariable String orderId,
+			@RequestBody JsonRequest jsonRequest) {
+		String partitonId = OrderMain.getDbId(orderId);
+		String jString = jsonRequest.getJsonString();
+		Map<String, String> jsonMap = JsonUtil.fromJson(jString);
+		String stepId = jsonMap.get("stepId");
+		String flowId = jsonMap.get("flowId");
+		ProcessResult processResult = orderService.selectOrderFlow(orderId, partitonId, stepId, flowId);
+		toJsonProcessResult(processResult);
+		return processResult;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/test")
+	public ProcessResult testFlow(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
+			@RequestBody JsonRequest jsonRequest) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
+		return processResult;
+	}
+	protected void toJsonProcessResult(ProcessResult processResult)
+	{
+		if(processResult.getRetCode()==OrderDbConst.RESULT_SUCCESS)
+		{
+			
+			Object object = processResult.getResponseInfo();
+			if(object!=null)
+			{
+				processResult.setResponseInfo(JsonUtil.toJson(object));
+			}
+		}
 	}
 
 }

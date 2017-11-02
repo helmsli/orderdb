@@ -22,7 +22,7 @@ public interface OrderMainMapper {
 	@Update("UPDATE order_main SET catetory=#{catetory}, parent_order_id=#{parentOrderId},"
 			+ "parent_order_category=#{parentOrderCategory},"
 			+ "owner_key=#{ownerKey}, current_step=#{currentStep}, current_status=#{currentStatus},"
-			+ "update_time=#{updateTime}, is_finished=#{isFinished} WHERE order_id=#{orderId} and partition_id=#{partitionId} and flow_id=#{flowId}")
+			+ "update_time=#{updateTime}, is_finished=#{isFinished} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
 	int update(OrderMain record);
 
 	@Update("UPDATE order_main SET current_step=#{step}, current_status=#{status} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
@@ -32,7 +32,6 @@ public interface OrderMainMapper {
 	@Select("select partition_id as partitionId, order_id as orderId, catetory,parent_order_id as parentOrderId, parent_order_category as parentOrderCategory, "
 			+ "owner_key as ownerKey,current_step as currentStep, current_status as currentStatus, "
 			+ "update_time as updateTime, is_finished as isFinished, flow_id as flowId, creat_time as creatTime"
-			+ " from order_main WHERE order_id=#{orderId} and partition_id=#{partitionId} and flow_id=#{flowId}")
-	OrderMain selectOrderMain(@Param("orderId") String orderId, @Param("flowId") String flowId,
-			@Param("partitionId") String partitionId);
+			+ " from order_main WHERE order_id=#{orderId} and partition_id=#{partitionId}")
+	OrderMain selectOrderMain(@Param("orderId") String orderId, @Param("partitionId") String partitionId);
 }

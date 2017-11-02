@@ -73,5 +73,7 @@ public class Test {
 	public void dateTest() {
 		Date date = new Date(System.currentTimeMillis());
 		System.out.println(date);
+		String aString = "aaaaaaaaaaaaaaaaaaaaa1234";
+		System.out.println(aString.substring(aString.length() - 4, aString.length()));
 	}
 }

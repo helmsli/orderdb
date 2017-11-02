@@ -51,6 +51,11 @@ public class StepJumpDef {
 	public void setIsNotify(int isNotify) {
 		this.isNotify = isNotify;
 	}
+	@Override
+	public String toString() {
+		return "StepJumpDef [category=" + category + ", startResult=" + startResult + ", endResult=" + endResult
+				+ ", nextStep=" + nextStep + ", isNotify=" + isNotify + "]";
+	}
 	
 	
 }

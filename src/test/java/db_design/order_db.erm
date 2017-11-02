@@ -11,8 +11,8 @@
 	</page_setting>
 	<category_index>0</category_index>
 	<zoom>1.0</zoom>
-	<x>0</x>
-	<y>133</y>
+	<x>31</x>
+	<y>0</y>
 	<default_color>
 		<r>128</r>
 		<g>128</g>
@@ -135,7 +135,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-10-07 11:09:59</creation_date>
-			<updated_date>2017-10-31 09:25:16</updated_date>
+			<updated_date>2017-11-01 10:28:31</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
@@ -647,7 +647,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,default,下一步的步骤，是否通知运维；&#x0D;&#x0A;</description>
+			<description>注释参见task_out_error</description>
 			<logical_name>失败后如果没有配置错误码，调用该请求</logical_name>
 			<physical_name>task_out_default</physical_name>
 			<type>varchar(n)</type>
@@ -663,7 +663,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;具体如下：&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,返回值,下一步的步骤，是否通知运维；&#x0D;&#x0A;离散的格式：&#x0D;&#x0A;2，离散数值1，离散数值2，离散数值n,下一步的步骤，是否通知运维；&#x0D;&#x0A;区间的格式；&#x0D;&#x0A;1，区间开始数值，区间结束数值，下一步的步骤，是否通知运维；&#x0D;&#x0A;&#x0D;&#x0A;</description>
+			<description>定义执行完任务失败后根据返回数值控制状态跳转，这个字段需要填写表格，以；分割行，以，分割列&#x0D;&#x0A;格式如下：&#x0D;&#x0A;错误码支持区间配置；支持离散的；&#x0D;&#x0A;类型(0-单值，1-区间，2-离散数值)返回数值错误码,步骤,是否通知运维(0--不通知，其余通知）;&#x0D;&#x0A;</description>
 			<logical_name>任务执行后失败的步骤定义</logical_name>
 			<physical_name>task_out_error</physical_name>
 			<type>varchar(n)</type>
@@ -679,7 +679,7 @@
 			<binary>false</binary>
 			<args></args>
 			<char_semantics>false</char_semantics>
-			<description>格式如下：以；分割每一个步骤，以，分割每一个步骤中的内容；&#x0D;&#x0A;具体如下：&#x0D;&#x0A;单值的格式&#x0D;&#x0A;0,返回值,下一步的步骤，是否通知运维；&#x0D;&#x0A;</description>
+			<description>定义执行完任务成功后根据返回数值控制状态跳转&#x0D;&#x0A;格式如下：&#x0D;&#x0A;&#x0D;&#x0A;0,步骤;&#x0D;&#x0A;</description>
 			<logical_name>任务执行成功后的步骤定义</logical_name>
 			<physical_name>task_out_succ</physical_name>
 			<type>varchar(n)</type>
@@ -916,14 +916,14 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
 		<table>
 			<id>1</id>
-			<height>160</height>
-			<width>225</width>
+			<height>181</height>
+			<width>238</width>
 				<font_name>Microsoft YaHei UI</font_name>
 				<font_size>9</font_size>
 			<x>60</x>
@@ -1180,9 +1180,9 @@
 			</complex_unique_key_list>
 			<table_properties>
 				<schema></schema>
-				<character_set></character_set>
+				<character_set>utf8</character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -1415,7 +1415,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -1872,6 +1872,31 @@
 				</normal_column>
 			</columns>
 			<indexes>
+				<inidex>
+					<full_text>false</full_text>
+					<non_unique>true</non_unique>
+					<name>index_order_flow</name>
+					<type></type>
+					<description></description>
+					<columns>
+						<column>
+							<id>19</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>18</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>21</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>22</id>
+							<desc>false</desc>
+						</column>
+					</columns>
+				</inidex>
 			</indexes>
 			<complex_unique_key_list>
 			</complex_unique_key_list>
@@ -1879,7 +1904,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -2079,7 +2104,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -2272,6 +2297,48 @@
 				</normal_column>
 			</columns>
 			<indexes>
+				<inidex>
+					<full_text>false</full_text>
+					<non_unique>true</non_unique>
+					<name>index_status</name>
+					<type></type>
+					<description></description>
+					<columns>
+						<column>
+							<id>40</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>38</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>39</id>
+							<desc>false</desc>
+						</column>
+					</columns>
+				</inidex>
+				<inidex>
+					<full_text>false</full_text>
+					<non_unique>true</non_unique>
+					<name>index_id</name>
+					<type></type>
+					<description></description>
+					<columns>
+						<column>
+							<id>36</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>39</id>
+							<desc>false</desc>
+						</column>
+						<column>
+							<id>40</id>
+							<desc>false</desc>
+						</column>
+					</columns>
+				</inidex>
 			</indexes>
 			<complex_unique_key_list>
 			</complex_unique_key_list>
@@ -2279,7 +2346,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -2710,7 +2777,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>
@@ -3075,7 +3142,7 @@
 				<schema></schema>
 				<character_set></character_set>
 				<collation></collation>
-				<storage_engine></storage_engine>
+				<storage_engine>InnoDB</storage_engine>
 				<primary_key_length_of_text>null</primary_key_length_of_text>
 			</table_properties>
 		</table>

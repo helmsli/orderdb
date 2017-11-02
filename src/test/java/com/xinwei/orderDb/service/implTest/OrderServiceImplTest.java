@@ -20,7 +20,7 @@ import com.xinwei.orderDb.service.OrderService;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class OrderServiceImplTest {
-	@Autowired
+	@Autowired  
 	private OrderService orderService;
 	
 	@Autowired

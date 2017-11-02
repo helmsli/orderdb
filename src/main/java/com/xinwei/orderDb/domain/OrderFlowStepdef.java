@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -18,9 +16,7 @@ import org.springframework.util.StringUtils;
  */
 public class OrderFlowStepdef implements Serializable {
 
-	
 	static public final String Step_out_Default="default";
-	Logger logger = LoggerFactory.getLogger(OrderFlowStepdef.class);
 	/** serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
@@ -65,27 +61,32 @@ public class OrderFlowStepdef implements Serializable {
 	
 	protected void setStepJumpDefs(String strStr)
 	{
-		//获取多个strStepJumpDefs
+		//获取多个strStepJumpDefs 0,6002,0;2,6003,6100,0;
 		try {
+			System.out.println("strstr:" + this.stepId + ":"+ strStr);
 			String strSource = strStr;
-			if(strStr.trim().endsWith(";"))
+			if(strStr.endsWith(";"))
 			{
-				strSource = strStr.substring(0,strStr.length()-1);
+				strSource=strStr.substring(0, strStr.length()-1);
 			}
-			
-			String[] strStepJumpDefs= StringUtils.split(strSource, ";");
+			String[] strStepJumpDefs= StringUtils.tokenizeToStringArray(strSource, ";");
 			if(strStepJumpDefs==null)
 			{
-				logger.error("init StepJumpDefs error:" + this.toString());
+				System.out.println("init StepJumpDefs error:" + this.toString());
 				System.exit(0);
 			}
 			for(int i=0;i<strStepJumpDefs.length;i++)
 			{
-				
-				String[] strStepJumpDefInfo = StringUtils.split(strStepJumpDefs[i], ",");
+				//0,6002,0;2,6003,6100,0
+				String singleStepStr = strStepJumpDefs[i];
+				if(singleStepStr.endsWith(","))
+				{
+					singleStepStr = strStepJumpDefs[i].substring(0, strStepJumpDefs[i].length()-1);
+				}
+				String[] strStepJumpDefInfo = StringUtils.tokenizeToStringArray(singleStepStr, ",");
 				if(strStepJumpDefInfo==null||strStepJumpDefInfo.length<4)
 				{
-					logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStepJumpDefs[i]);
+					System.out.println("init StepJumpDefs length error:" + this.toString() + ":" + singleStepStr + ":" + strStepJumpDefInfo+":"+strStepJumpDefInfo.length);
 					System.exit(0);
 				}
 				int category = Integer.parseInt(strStepJumpDefInfo[0]);
@@ -93,7 +94,11 @@ public class OrderFlowStepdef implements Serializable {
 				if(category ==StepJumpDef.Category_Single)
 				{
 					StepJumpDef stepJumpDef = new StepJumpDef();
+					
 					stepJumpDef.setCategory(category);
+					stepJumpDef.setNextStep(strStepJumpDefInfo[2]);
+					
+					stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[3]));
 					if(Step_out_Default.compareToIgnoreCase(strStepJumpDefInfo[1].trim())==0)
 					{
 						this.stepMaps.put(Step_out_Default, stepJumpDef);
@@ -103,11 +108,9 @@ public class OrderFlowStepdef implements Serializable {
 						stepJumpDef.setStartResult(Integer.parseInt(strStepJumpDefInfo[1]));
 						this.stepMaps.put(strStepJumpDefInfo[1].trim(), stepJumpDef);
 					}
-					stepJumpDef.setNextStep(strStepJumpDefInfo[2]);
-					
-					stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[3]));
 					
 					
+					System.out.print(stepJumpDef.toString());
 				}
 				else if(category ==StepJumpDef.Category_discrete)
 				{
@@ -121,6 +124,7 @@ public class OrderFlowStepdef implements Serializable {
 						stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[strStepJumpDefInfo.length-1]));
 						
 						this.stepMaps.put(strStepJumpDefInfo[j].trim(), stepJumpDef);
+						System.out.print(stepJumpDef.toString()); 
 					}
 				} 
 				else if(category ==StepJumpDef.Category_Range)
@@ -135,10 +139,11 @@ public class OrderFlowStepdef implements Serializable {
 					stepJumpDef.setIsNotify(Integer.parseInt(strStepJumpDefInfo[strStepJumpDefInfo.length-1]));
 					
 					this.stepLists.add(stepJumpDef);
+					System.out.print(stepJumpDef.toString());
 				}
 				else
 				{
-					logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStepJumpDefs[i]);
+					System.out.println("init StepJumpDefs category error:" + this.toString() + ":" + strStepJumpDefs[i]);
 					System.exit(0);
 				}
 				
@@ -147,7 +152,7 @@ public class OrderFlowStepdef implements Serializable {
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error("init StepJumpDefs error:" + this.toString() + ":" + strStr);
+			System.out.println("init StepJumpDefs error .system  will exit(0):" + this.toString() + ":" + strStr);
 			System.exit(0);
 		}
 	}
@@ -171,14 +176,7 @@ public class OrderFlowStepdef implements Serializable {
 				return stepJumpDef;
 			}
 		}
-		return stepMaps.get(this.Step_out_Default);
-		
-	}
-	
-	public StepJumpDef getDefaultStepJumpDef()
-	{
-		
-		return stepMaps.get(this.Step_out_Default);
+		return stepMaps.get(Step_out_Default);
 		
 	}
 	

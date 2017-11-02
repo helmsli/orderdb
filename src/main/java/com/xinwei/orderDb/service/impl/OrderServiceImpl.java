@@ -1,6 +1,7 @@
 package com.xinwei.orderDb.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -194,11 +195,25 @@ public class OrderServiceImpl implements OrderService {
 		ProcessResult processResult = new ProcessResult();
 
 		try {
+			
 			int result = orderMainMapper.update(orderMain);
-
+			//更新失败
 			if (result != 1) {
-				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
-				return processResult;
+				if(result==0)
+				{
+					//如果查询不存在，执行插入
+					OrderMain queryOrderMain= orderMainMapper.selectOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());	
+					if(queryOrderMain==null)
+					{
+						orderMain.setCreatTime(Calendar.getInstance().getTime());
+						result = orderMainMapper.insert(orderMain);	
+					}
+				}
+				if(result!=1)
+				{
+					processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
+					return processResult;
+				}
 			}
 
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
@@ -300,7 +315,7 @@ public class OrderServiceImpl implements OrderService {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 				return processResult;
 			}
-			processResult.setResponseInfo(resultMap);
+			processResult.setResponseInfo(resultMap.toString());
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
 
 		} catch (Exception e) {
@@ -368,14 +383,12 @@ public class OrderServiceImpl implements OrderService {
 			String orderId, int preOrderAutoRun) {
 		ProcessResult processResult = new ProcessResult();
 		Date date = new Date();
-
-		preOrderFlow.setCreateTime(date);
-		nextOrderFlow.setCreateTime(date);
+		preOrderFlow.setUpdateTime(date);
+		nextOrderFlow.setUpdateTime(date);
 		/*
 		 * 先去更新，判断更新结果
 		 */
-		OrderMain orderMain = orderMainMapper.selectOrderMain(orderId, preOrderFlow.getFlowId(),
-				preOrderFlow.getPartitionId());
+		OrderMain orderMain = orderMainMapper.selectOrderMain(orderId, preOrderFlow.getPartitionId());
 		orderMain.setUpdateTime(date);
 		orderMain.setFlowId(nextOrderFlow.getFlowId());
 		orderMain.setCurrentStatus(nextOrderFlow.getCurrentStatus());
@@ -385,13 +398,27 @@ public class OrderServiceImpl implements OrderService {
 			processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 			return processResult;
 		}
+		// 如果是第一步
+		// 直接插入nextFlowhou 返回
+		if (nextOrderFlow.getStepId().compareToIgnoreCase(OrderMain.Step_start)==0) {
+			nextOrderFlow.setUpdateTime(date);
+			orderFlowMapper.insert(nextOrderFlow);
+			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
+
+			return processResult;
+		}
 
 		int preOrderFlowResult = orderFlowMapper.update(preOrderFlow);
 		int nextOrderFlowResult = orderFlowMapper.update(nextOrderFlow);
 		if (preOrderFlowResult != 1) {
+			preOrderFlow.setUpdateTime(date);
+			preOrderFlow.setCreateTime(date);
+			
 			orderFlowMapper.insert(preOrderFlow);
 		}
 		if (nextOrderFlowResult != 1) {
+			nextOrderFlow.setCreateTime(date);
+			nextOrderFlow.setUpdateTime(date);
 			orderFlowMapper.insert(nextOrderFlow);
 		}
 
@@ -476,6 +503,56 @@ public class OrderServiceImpl implements OrderService {
 			}
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
 			processResult.setResponseInfo(orderFlowStepdefs);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+		}
+		return processResult;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.xinwei.orderDb.service.OrderService#getOrderMainFromDb(java.lang.String)
+	 * 根據orderId查詢orderMain
+	 */
+	@Override
+	public ProcessResult getOrderMainFromDb(String orderId) {
+		// TODO Auto-generated method stub
+		ProcessResult processResult = new ProcessResult();
+		try {
+			String partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
+			OrderMain orderMain = orderMainMapper.selectOrderMain(orderId, partitionId);
+			if (orderMain == null) {
+				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
+				return processResult;
+			}
+			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
+			processResult.setResponseInfo(orderMain);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+		}
+		return processResult;
+	}
+
+	@Override
+	public ProcessResult selectOrderFlow(String orderId, String partitonId, String stepId, String flowId) {
+		// TODO Auto-generated method stub
+		ProcessResult processResult = new ProcessResult();
+		try {
+			String partitionId = OrderMain.getDbId(orderId);
+
+			OrderFlow orderFlow = orderFlowMapper.selectOrderFlow(orderId, partitionId, stepId, flowId);
+			if (orderFlow == null) {
+				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
+				return processResult;
+			}
+			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
+			processResult.setResponseInfo(orderFlow);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

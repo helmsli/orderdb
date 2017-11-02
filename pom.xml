@@ -77,13 +77,13 @@
 			</dependency> -->
 
 
-		<!-- 热部署支持 -->
+		<!-- 热部署支持 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-
+		-->
 
 		<!-- aop -->
 		<dependency>

@@ -107,4 +107,22 @@ public interface OrderService {
 	 * @return
 	 */
 	public ProcessResult getOrderStepDef(String catetory);
+	
+	/**
+	 * 根據orderId查詢orderMain
+	 * @param orderId
+	 * @return
+	 */
+	public ProcessResult getOrderMainFromDb(String orderId);
+	
+	/**
+	 * 
+	 * 根据orderFlow四索引查询orderFlow
+	 * @param orderId
+	 * @param partitonId
+	 * @param stepId
+	 * @param flowId
+	 * @return
+	 */
+	public ProcessResult selectOrderFlow(String orderId, String partitonId, String stepId, String flowId);
 }

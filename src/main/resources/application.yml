@@ -2,8 +2,8 @@ spring:
   datasource:
     name: order_db
     url: jdbc:mysql://127.0.0.1:3306/order_db
-    username: root
-    password: xinwei
+    username: cmanager
+    password: cmanager
     driver-class-name: com.mysql.jdbc.Driver
     tomcat:
       initial-size: 1

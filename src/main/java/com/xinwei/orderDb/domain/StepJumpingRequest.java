@@ -12,7 +12,7 @@ public class StepJumpingRequest implements Serializable {
 
 	private int preOrderAutoRun;
 	/**
-	 * 指明是否需要后台自动运行 nextOrderFlow
+	 * 指明是否需要后台自动运行 nextOrderFlow 0no 1yes
 	 */
 	private int nextOrderAutoRun;
 

@@ -76,8 +76,9 @@ public class OrderMain implements Serializable {
 	public OrderMain() {
 	}
 	
-	
-	
+	public static String getDbId(String orderId) {
+		return orderId.substring(orderId.length() - 4, orderId.length());
+	}
 
 	/**
 	 * Set the 分区ID.
@@ -107,6 +108,7 @@ public class OrderMain implements Serializable {
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
 		this.partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
+		
 	}
 
 	/**

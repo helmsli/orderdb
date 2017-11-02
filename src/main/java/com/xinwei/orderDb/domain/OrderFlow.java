@@ -82,7 +82,6 @@ public class OrderFlow implements Serializable {
 	 */
 	public void setPartitionId(String partitionId) {
 		this.partitionId = partitionId;
-		this.partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
 	}
 
 	/**
@@ -102,6 +101,8 @@ public class OrderFlow implements Serializable {
 	 */
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
+		this.partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
+		
 	}
 
 	/**
