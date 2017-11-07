@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.xinwei.nnl.common.domain.ProcessResult;
+import com.xinwei.nnl.common.util.JsonUtil;
 import com.xinwei.orderDb.Const.OrderDbConst;
 import com.xinwei.orderDb.domain.OrderContextData;
 import com.xinwei.orderDb.domain.OrderFlow;
@@ -119,6 +120,7 @@ public class OrderServiceImpl implements OrderService {
 				record.setOrderId(orderFlow.getOrderId());
 				record.setPartitionId(orderFlow.getPartitionId());
 				record.setStepId(orderFlow.getStepId());
+				record.setContextData(orderFlow.getContextData());
 				result1 = orderContextDataMapper.insert(record);
 				if (result1 == 1) {
 					result2++;
@@ -161,7 +163,15 @@ public class OrderServiceImpl implements OrderService {
 				// 对MAP进行遍历
 				for (String datakey : contextDatas.keySet()) {
 					OrderFlow orderFlow = new OrderFlow();
-					orderFlow.setContextData(contextDatas.get(datakey));
+//					if (contextDatas.get(datakey) != null) {
+//						if (contextDatas.get(datakey).getClass().isPrimitive()) {
+//							orderFlow.setContextData(String.valueOf(contextDatas.get(datakey)));
+//						}else {
+//							orderFlow.setContextData(contextDatas.get(datakey).toString());
+//
+//						}
+//					}
+					orderFlow.setContextData(contextDatas.get(datakey).toString());
 					orderFlow.setDataKey(datakey);
 					orderFlow.setFlowId(String.valueOf(currentTime--));
 					orderFlow.setOrderId(orderMain.getOrderId());
@@ -199,18 +209,16 @@ public class OrderServiceImpl implements OrderService {
 			int result = orderMainMapper.update(orderMain);
 			//更新失败
 			if (result != 1) {
-				if(result==0)
-				{
-					//如果查询不存在，执行插入
-					OrderMain queryOrderMain= orderMainMapper.selectOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());	
-					if(queryOrderMain==null)
-					{
+				if (result == 0) {
+					// 如果查询不存在，执行插入
+					OrderMain queryOrderMain = orderMainMapper.selectOrderMain(orderMain.getOrderId(),
+							orderMain.getPartitionId());
+					if (queryOrderMain == null) {
 						orderMain.setCreatTime(Calendar.getInstance().getTime());
 						result = orderMainMapper.insert(orderMain);	
 					}
 				}
-				if(result!=1)
-				{
+				if (result != 1) {
 					processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 					return processResult;
 				}
@@ -299,23 +307,22 @@ public class OrderServiceImpl implements OrderService {
 	public ProcessResult getContextData(String orderId, List<String> contextKeys) {
 		// TODO Auto-generated method stub
 
-		Map<String, OrderContextData> resultMap = new HashMap<>(16);
+		Map<String, String> resultMap = new HashMap<>();
 		ProcessResult processResult = new ProcessResult();
 
 		try {
 
 			for (String contextKey : contextKeys) {
 				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(orderId,
-						contextKey);
-
-				resultMap.put(contextKey, orderContextData);
+						contextKey.trim());
+				resultMap.put(contextKey, orderContextData.getContextData());
 
 			}
 			if (resultMap.size() == 0) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 				return processResult;
 			}
-			processResult.setResponseInfo(resultMap.toString());
+			processResult.setResponseInfo(resultMap);
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
 
 		} catch (Exception e) {
@@ -343,7 +350,7 @@ public class OrderServiceImpl implements OrderService {
 			long currentTime = System.currentTimeMillis();
 			for (String dataKey : contextDatas.keySet()) {
 				OrderContextData orderContextData = new OrderContextData();
-				orderContextData.setContextData(contextDatas.get(dataKey));
+				orderContextData.setContextData((String) contextDatas.get(dataKey));
 				orderContextData.setDataKey(dataKey);
 				orderContextData.setFlowId(String.valueOf(currentTime--));
 				orderContextData.setOrderId(orderId);
@@ -400,7 +407,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 		// 如果是第一步
 		// 直接插入nextFlowhou 返回
-		if (nextOrderFlow.getStepId().compareToIgnoreCase(OrderMain.Step_start)==0) {
+		if (nextOrderFlow.getStepId().compareToIgnoreCase(OrderMain.Step_start) == 0) {
 			nextOrderFlow.setUpdateTime(date);
 			orderFlowMapper.insert(nextOrderFlow);
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);

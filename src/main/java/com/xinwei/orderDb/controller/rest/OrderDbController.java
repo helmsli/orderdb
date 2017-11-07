@@ -1,5 +1,7 @@
 package com.xinwei.orderDb.controller.rest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.reflect.TypeToken;
 import com.xinwei.nnl.common.domain.JsonRequest;
 import com.xinwei.nnl.common.domain.ProcessResult;
 import com.xinwei.nnl.common.util.JsonUtil;
@@ -192,7 +195,7 @@ public class OrderDbController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/updateMainOrder")
 	public ProcessResult updateMainOrder(@PathVariable String dbId, @PathVariable String orderId,
-			@RequestBody OrderMain orderMain) {
+			@RequestBody OrderMainContext orderMain) {
 		ProcessResult processResult = new ProcessResult();
 		try {
 			processResult = orderService.updateMainOrder(orderMain);
@@ -220,10 +223,9 @@ public class OrderDbController {
 		ProcessResult processResult = new ProcessResult();
 		try {
 			String jsonString = jsonRequest.getJsonString();
-			Map<String, List<String>> jsonMap = JsonUtil.fromJson(jsonString);
+			List<String> jsonList = JsonUtil.fromJson(jsonString, new TypeToken<List<String>>() {}.getType());
 			
-			List<String> contextKeys = jsonMap.get("contextKeys");
-			processResult = orderService.getContextData(orderId, contextKeys);
+			processResult = orderService.getContextData(orderId, jsonList);
 			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -301,20 +303,18 @@ public class OrderDbController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/test")
-	public ProcessResult testFlow(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
-			@RequestBody JsonRequest jsonRequest) {
+	public ProcessResult testFlow(@PathVariable String category, @PathVariable String dbId,
+			@PathVariable String orderId, @RequestBody JsonRequest jsonRequest) {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
 		return processResult;
 	}
-	protected void toJsonProcessResult(ProcessResult processResult)
-	{
-		if(processResult.getRetCode()==OrderDbConst.RESULT_SUCCESS)
-		{
-			
+
+	protected void toJsonProcessResult(ProcessResult processResult) {
+		if (processResult.getRetCode() == OrderDbConst.RESULT_SUCCESS) {
+
 			Object object = processResult.getResponseInfo();
-			if(object!=null)
-			{
+			if (object != null) {
 				processResult.setResponseInfo(JsonUtil.toJson(object));
 			}
 		}

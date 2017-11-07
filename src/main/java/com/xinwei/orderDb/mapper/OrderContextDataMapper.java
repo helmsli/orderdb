@@ -16,7 +16,9 @@ public interface OrderContextDataMapper {
 			+ "(#{partitionId}, #{orderId}, #{dataKey}, #{stepId}, #{flowId}, #{contextData})")
 	int insert(OrderContextData record);
 
-	@Select("select partition_id as partitionId, order_id as orderId, data_key as dataKey, step_id as stepId, flow_id as flowId, context_data as contextData from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
+	@Select("select partition_id as partitionId, order_id as orderId, data_key as dataKey, "
+			+ "step_id as stepId, flow_id as flowId, context_data as contextData "
+			+ "from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
 	OrderContextData selectByOrderIdAndDataKey(@Param("orderId") String orderId, @Param("dataKey") String dataKey);
 
 	// //根据orderId和上下文关键字删除上下文数据

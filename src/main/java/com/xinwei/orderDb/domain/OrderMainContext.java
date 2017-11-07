@@ -33,7 +33,7 @@ public class OrderMainContext extends OrderMain {
 
 	@Override
 	public String toString() {
-		return "OrderMainContext [contextDatasJson=" + contextDatasJson + ", contextDatas=" + contextDatas + "]" + super.toString();
+		return "OrderMainContext [contextDatasJson=" + contextDatasJson + ", contextDatas=" + contextDatas + "]";
 	}
 
 	
