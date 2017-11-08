@@ -60,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
 	public ProcessResult createNewOrder(OrderMain orderMain) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
+		/*
 		UserOrders userOrders = new UserOrders();
 		userOrders.setCatetory(orderMain.getCatetory());
 		userOrders.setCreateTime(new Date());
@@ -67,12 +68,23 @@ public class OrderServiceImpl implements OrderService {
 		userOrders.setOrderId(orderMain.getOrderId());
 		userOrders.setOwnerKey(orderMain.getOwnerKey());
 		userOrdersMapper.insertUserOrders(userOrders);
-
-		Date date = new Date(System.currentTimeMillis());
-		orderMain.setCreatTime(date);
-		orderMain.setIsFinished(0);
-		int result = orderMainMapper.insert(orderMain);
-
+		 */
+		//selectCountOrderMain
+		int result=0;
+		int record = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());
+		if(record==0)
+		{
+			Date date = new Date(System.currentTimeMillis());
+			orderMain.setCreatTime(date);
+			orderMain.setIsFinished(0);
+			 result = orderMainMapper.insert(orderMain);
+		}
+		else
+		{
+			Date date = new Date(System.currentTimeMillis());
+			orderMain.setUpdateTime(Calendar.getInstance().getTime());
+			result = orderMainMapper.update(orderMain);
+		}
 		if (result != 1) {
 			processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 			return processResult;
@@ -91,14 +103,23 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
 	 */
 	@Transactional
-	public ProcessResult insertMainFlow(OrderMain orderMain, List<OrderFlow> orderFlows) {
+	public ProcessResult insertMainFlow(OrderMain orderMain, Map<String,String> contextDatas) {
 		ProcessResult processResult = new ProcessResult();
 		Date date = new Date(System.currentTimeMillis());
 
-		orderMain.setCreatTime(date);
-		orderMain.setUpdateTime(date);
-		orderMainMapper.insert(orderMain);
-
+		int records = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());
+		if(records==0)
+		{
+			orderMain.setCreatTime(date);
+			orderMain.setUpdateTime(date);
+			orderMainMapper.insert(orderMain);
+		}
+		else
+		{
+			orderMain.setUpdateTime(date);
+			orderMainMapper.update(orderMain);
+		}
+		/*
 		UserOrders userOrders = new UserOrders();
 		userOrders.setCatetory(orderMain.getCatetory());
 		userOrders.setCreateTime(date);
@@ -106,29 +127,13 @@ public class OrderServiceImpl implements OrderService {
 		userOrders.setOrderId(orderMain.getOrderId());
 		userOrders.setOwnerKey(orderMain.getOwnerKey());
 		userOrdersMapper.insertUserOrders(userOrders);
-
+		 */
 		int result1 = 0;
 		int result2 = 0;
 
 		// if (result == 1) {
-		if (orderFlows != null) {
-			for (OrderFlow orderFlow : orderFlows) {
-				orderFlowMapper.insert(orderFlow);
-				OrderContextData record = new OrderContextData();
-				record.setDataKey(orderFlow.getDataKey());
-				record.setFlowId(orderFlow.getFlowId());
-				record.setOrderId(orderFlow.getOrderId());
-				record.setPartitionId(orderFlow.getPartitionId());
-				record.setStepId(orderFlow.getStepId());
-				record.setContextData(orderFlow.getContextData());
-				result1 = orderContextDataMapper.insert(record);
-				if (result1 == 1) {
-					result2++;
-				}
-			}
-			if (result2 == orderFlows.size()) {
-				processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
-			}
+		if (contextDatas != null) {
+			this.putContextData(orderMain.getOrderId(), contextDatas);
 		}
 		// }
 
@@ -157,32 +162,10 @@ public class OrderServiceImpl implements OrderService {
 		orderMain.setCreatTime(date);
 		orderMain.setIsFinished(0);
 		try {
-			if (contextDatas != null) {
-				List<OrderFlow> orderFlows = new ArrayList<>();
-				long currentTime = System.currentTimeMillis();
-				// 对MAP进行遍历
-				for (String datakey : contextDatas.keySet()) {
-					OrderFlow orderFlow = new OrderFlow();
-//					if (contextDatas.get(datakey) != null) {
-//						if (contextDatas.get(datakey).getClass().isPrimitive()) {
-//							orderFlow.setContextData(String.valueOf(contextDatas.get(datakey)));
-//						}else {
-//							orderFlow.setContextData(contextDatas.get(datakey).toString());
-//
-//						}
-//					}
-					orderFlow.setContextData(contextDatas.get(datakey).toString());
-					orderFlow.setDataKey(datakey);
-					orderFlow.setFlowId(String.valueOf(currentTime--));
-					orderFlow.setOrderId(orderMain.getOrderId());
-					orderFlow.setPartitionId(orderMain.getPartitionId());
-					orderFlow.setStepId(String.valueOf(OrderFlow.STATUS_initial));
-					orderFlow.setCreateTime(date);
-					orderFlows.add(orderFlow);
-				}
+			
 
-				processResult = insertMainFlow(orderMain, orderFlows);
-			}
+				processResult = insertMainFlow(orderMain, contextDatas);
+			
 
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -352,10 +335,18 @@ public class OrderServiceImpl implements OrderService {
 				OrderContextData orderContextData = new OrderContextData();
 				orderContextData.setContextData((String) contextDatas.get(dataKey));
 				orderContextData.setDataKey(dataKey);
-				orderContextData.setFlowId(String.valueOf(currentTime--));
+				orderContextData.setFlowId("0");
 				orderContextData.setOrderId(orderId);
 				orderContextData.setStepId("0");
-				result1 = orderContextDataMapper.insert(orderContextData);
+				int records = orderContextDataMapper.selectCount(orderId, dataKey);
+				if(records==0)
+				{
+					result1 = orderContextDataMapper.insert(orderContextData);
+				}
+				else
+				{
+					result1=orderContextDataMapper.updateOrderContextData(orderContextData);
+				}
 				if (result1 == 1) {
 					result2++;
 				}
@@ -389,7 +380,7 @@ public class OrderServiceImpl implements OrderService {
 	public ProcessResult stepJumping(OrderFlow preOrderFlow, OrderFlow nextOrderFlow, int nextOrderAutoRun,
 			String orderId, int preOrderAutoRun) {
 		ProcessResult processResult = new ProcessResult();
-		Date date = new Date();
+		Date date = Calendar.getInstance().getTime();
 		preOrderFlow.setUpdateTime(date);
 		nextOrderFlow.setUpdateTime(date);
 		/*
@@ -409,13 +400,14 @@ public class OrderServiceImpl implements OrderService {
 		// 直接插入nextFlowhou 返回
 		if (nextOrderFlow.getStepId().compareToIgnoreCase(OrderMain.Step_start) == 0) {
 			nextOrderFlow.setUpdateTime(date);
+			nextOrderFlow.setCreateTime(date);
 			orderFlowMapper.insert(nextOrderFlow);
 			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
 
 			return processResult;
 		}
-
-		int preOrderFlowResult = orderFlowMapper.update(preOrderFlow);
+		preOrderFlow.setUpdateTime(Calendar.getInstance().getTime());
+		int preOrderFlowResult = orderFlowMapper.updateStatus(preOrderFlow);
 		int nextOrderFlowResult = orderFlowMapper.update(nextOrderFlow);
 		if (preOrderFlowResult != 1) {
 			preOrderFlow.setUpdateTime(date);

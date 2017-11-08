@@ -27,6 +27,12 @@ public interface OrderFlowMapper {
 			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
 	int update(OrderFlow orderFlow);
 
+	@Update(" UPDATE order_flow SET"
+			+ " update_time=#{updateTime},current_status=#{currentStatus}, ret_code=#{retCode}, ret_msg=#{retMsg}"
+			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
+	int updateStatus(OrderFlow orderFlow);
+
+	
 	@Select("select * from order_flow where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
 	OrderFlow selectOrderFlow(@Param("orderId") String orderId, @Param("partitionId") String partitionId,
 			@Param("stepId") String stepId, @Param("flowId") String flowId);

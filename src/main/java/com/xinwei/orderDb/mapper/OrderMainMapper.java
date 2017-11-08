@@ -22,7 +22,7 @@ public interface OrderMainMapper {
 	@Update("UPDATE order_main SET catetory=#{catetory}, parent_order_id=#{parentOrderId},"
 			+ "parent_order_category=#{parentOrderCategory},"
 			+ "owner_key=#{ownerKey}, current_step=#{currentStep}, current_status=#{currentStatus},"
-			+ "update_time=#{updateTime}, is_finished=#{isFinished} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
+			+ "update_time=#{updateTime}, is_finished=#{isFinished} , flow_id = #{flowId} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
 	int update(OrderMain record);
 
 	@Update("UPDATE order_main SET current_step=#{step}, current_status=#{status} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
@@ -34,4 +34,8 @@ public interface OrderMainMapper {
 			+ "update_time as updateTime, is_finished as isFinished, flow_id as flowId, creat_time as creatTime"
 			+ " from order_main WHERE order_id=#{orderId} and partition_id=#{partitionId}")
 	OrderMain selectOrderMain(@Param("orderId") String orderId, @Param("partitionId") String partitionId);
+	
+	@Select("select count(*)  from order_main WHERE order_id=#{orderId} and partition_id=#{partitionId}")
+	public int selectCountOrderMain(@Param("orderId") String orderId, @Param("partitionId") String partitionId);
+	
 }

@@ -87,7 +87,7 @@ public class OrderDbController {
 		try {
 
 			processResult = orderService.configOrderFlow(orderFlow);
-			toJsonProcessResult(processResult);
+			//toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -123,7 +123,7 @@ public class OrderDbController {
 
 			processResult = orderService.stepJumping(preOrderFlow, nextOrderFlow, nextOrderAutoRun, orderId,
 					preOrderAutoRun);
-			toJsonProcessResult(processResult);
+			//toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -175,7 +175,7 @@ public class OrderDbController {
 			 */
 
 			processResult = orderService.updateStepStatus(orderFlow);
-			toJsonProcessResult(processResult);
+			//toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

@@ -1,5 +1,13 @@
 SET SESSION FOREIGN_KEY_CHECKS=0;
 
+/* Drop Indexes */
+
+DROP INDEX index_order_flow ON order_flow;
+DROP INDEX index_status ON user_orders;
+DROP INDEX index_id ON user_orders;
+
+
+
 /* Drop Tables */
 
 DROP TABLE IF EXISTS order_childs;
@@ -20,7 +28,7 @@ DROP TABLE IF EXISTS user_orders;
 CREATE TABLE order_childs
 (
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	-- 后四位UUUU是按照用户或者别的主键进行分库的规则；
 	-- 后5位到后7位XXX是按照一定的规则进行分区的；
 	-- yyyyyyyXXXUUUU
@@ -32,7 +40,7 @@ yyyyyyyXXXUUUU
 	child_category varchar(32),
 	child_orderId varchar(128),
 	create_time datetime
-) COMMENT = '该订单派生出来的子订单信息';
+) ENGINE = InnoDB COMMENT = '该订单派生出来的子订单信息';
 
 
 CREATE TABLE order_context__data
@@ -52,8 +60,8 @@ yyyyyyyXXXUUUU
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程',
 	-- 在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中
-	context_data varchar(4096) COMMENT '在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中'
-);
+	context_data blob COMMENT '在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中'
+) ENGINE = InnoDB;
 
 
 -- 按照订单ID和业务关键字分区
@@ -71,7 +79,7 @@ CREATE TABLE order_flow
 yyyyyyyXXXUUUU
 其中yyyyyyy是变长的。',
 	-- 订单归属关键字，比如买家订单，则需要保存买家的用户ID
-	owner_key varchar(256) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
+	owner_key varchar(128) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
 	step_id varchar(32),
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程',
@@ -79,7 +87,7 @@ yyyyyyyXXXUUUU
 	update_time datetime,
 	data_key varchar(64),
 	-- 在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中
-	context_data varchar(4096) COMMENT '在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中',
+	context_data blob COMMENT '在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中',
 	-- 任务失败后重做信息，保存json信息
 	retry_times varchar(1024) COMMENT '任务失败后重做信息，保存json信息',
 	current_status int,
@@ -87,7 +95,7 @@ yyyyyyyXXXUUUU
 	ret_code varchar(128) COMMENT '错误和描述',
 	-- 错误和描述
 	ret_msg varchar(128) COMMENT '错误和描述'
-) COMMENT = '按照订单ID和业务关键字分区
+) ENGINE = InnoDB COMMENT = '按照订单ID和业务关键字分区
 按照用户分库：按照XXX分区，一个分区支持40万的数据，一个订单包括20步，一个分区支持';
 
 
@@ -95,7 +103,7 @@ yyyyyyyXXXUUUU
 CREATE TABLE order_flow_def
 (
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	category_name varchar(128),
 	-- 标识订单系统的版本，以用来支持后续版本升级；
 	version varchar(32) COMMENT '标识订单系统的版本，以用来支持后续版本升级；',
@@ -109,18 +117,18 @@ CREATE TABLE order_flow_def
 buy:01;pay:02;',
 	-- 指明该订单结束的状态
 	finished_step varchar(32) COMMENT '指明该订单结束的状态'
-) COMMENT = '订单流程定义';
+) ENGINE = InnoDB COMMENT = '订单流程定义';
 
 
 CREATE TABLE order_flow_stepDef
 (
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	step_id varchar(32),
 	step_name varchar(128),
 	-- 填写进入该步骤的时候需要调用的外部任务。就是个URl，即该步骤需要调用的rest的ajax请求。
 	-- 如果为null，进入该步骤不需要调用外部接口，需要等待外部程序调用触发进入下一个环节；
-	task_in varchar(256) COMMENT '填写进入该步骤的时候需要调用的外部任务。就是个URl，即该步骤需要调用的rest的ajax请求。
+	task_in varchar(2048) COMMENT '填写进入该步骤的时候需要调用的外部任务。就是个URl，即该步骤需要调用的rest的ajax请求。
 如果为null，进入该步骤不需要调用外部接口，需要等待外部程序调用触发进入下一个环节；',
 	-- 定义执行完任务失败后根据返回数值控制状态跳转，这个字段需要填写表格，以；分割行，以，分割列
 	-- 格式如下：
@@ -150,7 +158,7 @@ CREATE TABLE order_flow_stepDef
 	run_info varchar(1024) COMMENT '保存任务类型对应的任务信息，比如定时任务，需要保存定时任务执行的信息；立即执行任务，可以配置优先级，延迟时间等信息;是否需要后台重做',
 	-- 任务失败后重做信息，保存json信息
 	retry_times varchar(1024) COMMENT '任务失败后重做信息，保存json信息'
-);
+) ENGINE = InnoDB;
 
 
 -- 订单主业务表
@@ -173,12 +181,12 @@ CREATE TABLE order_main
 yyyyyyyXXXUUUU
 其中yyyyyyy是变长的。',
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	-- 关联的父订单ID
 	parent_order_id varchar(128) COMMENT '关联的父订单ID',
 	parent_order_category varchar(32),
 	-- 订单归属关键字，比如买家订单，则需要保存买家的用户ID
-	owner_key varchar(256) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
+	owner_key varchar(128) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
 	current_step varchar(32),
 	current_status int,
 	update_time datetime,
@@ -189,7 +197,7 @@ yyyyyyyXXXUUUU
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程',
 	creat_time datetime
-) COMMENT = '订单主业务表
+) ENGINE = InnoDB COMMENT = '订单主业务表
 
 1.读写操作按照业务层调用者进行分开标识路由
 
@@ -201,7 +209,7 @@ yyyyyyyXXXUUUU
 CREATE TABLE order_running
 (
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	-- 按照创建时间加步骤id分区
 	partition_id varchar(16) COMMENT '按照创建时间加步骤id分区',
 	-- 后四位UUUU是按照用户或者别的主键进行分库的规则；
@@ -215,11 +223,12 @@ yyyyyyyXXXUUUU
 	create_time datetime,
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程'
-);
+) ENGINE = InnoDB;
 
 
--- ownerKey和创建时间 分区  ownerKey就是用户业务信息关键字 
+-- ownerKey和创建时间 分区  ownerKey就是用户信息关键字 
 -- 按照时间，ownerKey，状态索引， 
+-- 
 CREATE TABLE user_orders
 (
 	-- 后四位UUUU是按照用户或者别的主键进行分库的规则；
@@ -231,13 +240,22 @@ CREATE TABLE user_orders
 yyyyyyyXXXUUUU
 其中yyyyyyy是变长的。',
 	-- 对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单
-	catetory varchar(5) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
+	catetory varchar(32) COMMENT '对各种订单进行分类，以区别一个应用中不同类型的订单:例如：买家购买订单，买家退货订单',
 	-- 订单归属关键字，比如买家订单，则需要保存买家的用户ID
-	owner_key varchar(256) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
+	owner_key varchar(128) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
 	current_status int,
 	create_time datetime
-) COMMENT = 'ownerKey和创建时间 分区  ownerKey就是用户业务信息关键字 
-按照时间，ownerKey，状态索引， ';
+) ENGINE = InnoDB COMMENT = 'ownerKey和创建时间 分区  ownerKey就是用户信息关键字 
+按照时间，ownerKey，状态索引， 
+';
+
+
+
+/* Create Indexes */
+
+CREATE INDEX index_order_flow ON order_flow (order_id ASC, partition_id ASC, step_id ASC, flow_id ASC);
+CREATE INDEX index_status ON user_orders (create_time ASC, owner_key ASC, current_status ASC);
+CREATE INDEX index_id ON user_orders (order_id ASC, current_status ASC, create_time ASC);
 
 
 

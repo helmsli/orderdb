@@ -11,8 +11,8 @@
 	</page_setting>
 	<category_index>0</category_index>
 	<zoom>1.0</zoom>
-	<x>31</x>
-	<y>0</y>
+	<x>292</x>
+	<y>31</y>
 	<default_color>
 		<r>128</r>
 		<g>128</g>
@@ -135,7 +135,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-10-07 11:09:59</creation_date>
-			<updated_date>2017-11-01 10:28:31</updated_date>
+			<updated_date>2017-11-07 16:18:05</updated_date>
 			<model_property>
 				<name>Project Name</name>
 				<value></value>
@@ -190,7 +190,7 @@
 		</word>
 		<word>
 			<id>1</id>
-			<length>5</length>
+			<length>32</length>
 			<decimal>null</decimal>
 			<array>false</array>
 			<array_dimension>null</array_dimension>
@@ -238,7 +238,7 @@
 		</word>
 		<word>
 			<id>4</id>
-			<length>4096</length>
+			<length>null</length>
 			<decimal>null</decimal>
 			<array>false</array>
 			<array_dimension>null</array_dimension>
@@ -250,7 +250,7 @@
 			<description>在order_context_data表中，如果flowid为空，则数据保存在data表中，如果flowid不为空，则数据保存到order_flow中</description>
 			<logical_name>订单上下文数据</logical_name>
 			<physical_name>context_data</physical_name>
-			<type>varchar(n)</type>
+			<type>blob</type>
 		</word>
 		<word>
 			<id>5</id>
@@ -430,7 +430,7 @@
 		</word>
 		<word>
 			<id>16</id>
-			<length>256</length>
+			<length>128</length>
 			<decimal>null</decimal>
 			<array>false</array>
 			<array_dimension>null</array_dimension>
@@ -1380,7 +1380,7 @@
 					<unique_key_name></unique_key_name>
 					<logical_name></logical_name>
 					<physical_name></physical_name>
-					<type>varchar(n)</type>
+					<type>blob</type>
 					<constraint></constraint>
 					<default_value></default_value>
 					<auto_increment>false</auto_increment>
@@ -1712,7 +1712,7 @@
 					<unique_key_name></unique_key_name>
 					<logical_name></logical_name>
 					<physical_name></physical_name>
-					<type>varchar(n)</type>
+					<type>blob</type>
 					<constraint></constraint>
 					<default_value></default_value>
 					<auto_increment>false</auto_increment>

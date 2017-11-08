@@ -3,6 +3,8 @@ package com.xinwei.orderDb.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.util.StringUtils;
+
 /**
  * Model class of order_main.
  * 
@@ -107,8 +109,10 @@ public class OrderMain implements Serializable {
 	 */
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
-		this.partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
-		
+		if(!StringUtils.isEmpty(orderId)&&orderId.length()>=7)
+		{
+			this.partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
+		}
 	}
 
 	/**

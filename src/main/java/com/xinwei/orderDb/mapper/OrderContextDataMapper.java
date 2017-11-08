@@ -21,6 +21,10 @@ public interface OrderContextDataMapper {
 			+ "from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
 	OrderContextData selectByOrderIdAndDataKey(@Param("orderId") String orderId, @Param("dataKey") String dataKey);
 
+	@Select("select count(*) from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
+	int selectCount(@Param("orderId") String orderId, @Param("dataKey") String dataKey);
+
+	
 	// //根据orderId和上下文关键字删除上下文数据
 	@Delete("delete from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
 	int deleteOrderContextData(@Param("orderId") String orderId, @Param("dataKey") String dataKey);
