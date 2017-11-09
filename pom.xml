@@ -16,7 +16,6 @@
 			<url>http://maven.aliyun.com/nexus/content/groups/public</url>
 		</repository>
 	</repositories>
-
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -77,13 +76,8 @@
 			</dependency> -->
 
 
-		<!-- 热部署支持 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<optional>true</optional>
-		</dependency>
-		-->
+		<!-- 热部署支持 <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-devtools</artifactId> 
+			<optional>true</optional> </dependency> -->
 
 		<!-- aop -->
 		<dependency>
@@ -122,7 +116,44 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<!-- delete file="${project.build.directory}/classes/jdbc.properties" 
+									/ 
+								<copy file="${project.build.outputDirectory}/application.properties"
+									tofile="${project.build.directory}/application.properties" />
+								<copy file="${project.build.outputDirectory}/application.yml"
+									tofile="${project.build.directory}/application.yml" />
+									-->
+								<copy todir="${project.build.directory}" overwrite="true">
+									<fileset dir="${project.build.outputDirectory}">
+										<include name="**/*.properties" />
+										<include name="*.yml" />
+										<include name="*.sh" />
+									</fileset>
+									<fileset dir="src/test/java/db_design">
+										<include name="*.sql" />
+									</fileset>
+								</copy>
+								<replace token="xxxx.jar" value="${project.build.finalName}.jar">
+									<fileset dir="${project.build.directory}">
+										<include name="*.sh" />
+									</fileset>
+								</replace>
+								
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 
 
@@ -140,9 +171,16 @@
 				<directory>src/main/resources</directory>
 				<targetPath>BOOT-INF/classes/</targetPath>
 			</resource>
+			<!-- resource> <directory>src/main/resources</directory> <includes> <include>*.properties</include> 
+				<include>*.sh</include> <include>*.yml</include> </includes> <targetPath>target/${project.version}</targetPath> 
+				</resource -->
 		</resources>
-
+		<directory>target/${project.version}</directory>
+		<outputDirectory>target/classes</outputDirectory>
 	</build>
-
+	<!-- profiles> <profile> <id>window</id> <properties> <npm>npm.cmd</npm> 
+		</properties> <activation> <activeByDefault>true</activeByDefault> </activation> 
+		</profile> <profile> <id>linux</id> <properties> <npm>npm</npm> </properties> 
+		</profile> </profiles -->
 
 </project>

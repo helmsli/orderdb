@@ -15,7 +15,7 @@ CREATE DATABASE IF NOT EXISTS `order_db` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `order_db`;
 
 -- 正在导出表  order_db.order_flow_def 的数据：~0 rows (大约)
-DELETE FROM `order_flow_def` where category = "tcoursepub";
+DELETE FROM `order_flow_def` where catetory = "tcoursepub";
 /*!40000 ALTER TABLE `order_flow_def` DISABLE KEYS */;
 INSERT INTO `order_flow_def` (`catetory`, `category_name`, `version`, `orderId_category`, `deploy_id`, `steps`, `finished_step`) VALUES
 	('tcoursepub', '老师发布新课程', '0.1', '{"defId":1,"dbId":"0001","dbIdLength":4,"partitionIdLength":3,"partitionStartId":100,"partitionNum":10}', '1', '10', '10;');
@@ -24,7 +24,7 @@ INSERT INTO `order_flow_def` (`catetory`, `category_name`, `version`, `orderId_c
 
 -- 导出  表 order_db.order_flow_stepdef 结构
 -- 正在导出表  order_db.order_flow_stepdef 的数据：~2 rows (大约)
-DELETE FROM `order_flow_stepdef` where category="tcoursepub";
+DELETE FROM `order_flow_stepdef` where catetory="tcoursepub";
 /*!40000 ALTER TABLE `order_flow_stepdef` DISABLE KEYS */;
 INSERT INTO `order_flow_stepdef` (`catetory`, `step_id`, `step_name`, `task_in`, `task_out_error`, `task_out_succ`, `task_out_default`, `run_type`, `run_info`, `retry_times`) VALUES
 	('tcoursepub', '__start', '更新教师course信息', '{"name":"发布后立即执行", "category":1, "url":"http://127.0.0.1:9200/courseTeacherManager","restMethod":"confTeacherCourse","runExpress":"0/3 * * * * ?","retryExpress":"0/10 * * * * ?","maxThreadNumber" : 15,"initThreadNumber":1,"keepAliveTime":100,"queneSize":20}', '0,1,__start,0;', '0,0,upCourseClass,0;', '0,default,__start,0;', 'immediately', 'test', '3'),
