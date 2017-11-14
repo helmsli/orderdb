@@ -57,6 +57,7 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.xinwei.nnl</groupId>
 			<artifactId>nnl-commons</artifactId>
@@ -134,7 +135,7 @@
 									tofile="${project.build.directory}/application.yml" />
 									-->
 								<copy todir="${project.build.directory}" overwrite="true">
-									<fileset dir="${project.build.outputDirectory}">
+									<fileset dir="src/main/resources">
 										<include name="**/*.properties" />
 										<include name="*.yml" />
 										<include name="*.sh" />

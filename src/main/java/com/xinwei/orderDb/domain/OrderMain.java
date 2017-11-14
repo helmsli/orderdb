@@ -56,14 +56,14 @@ public class OrderMain implements Serializable {
 	private String currentStep;
 
 	/** 当前步骤状态. */
-	private Integer currentStatus;
+	private int currentStatus;
 
 	/** 最新更新时间. */
 	
 	private Date updateTime;
 
 	/** 订单是否结束. */
-	private Integer isFinished;
+	private int isFinished;
 
 	/** 流程ID. */
 	private String flowId;
@@ -225,7 +225,7 @@ public class OrderMain implements Serializable {
 	 * @param currentStatus
 	 *            当前步骤状态
 	 */
-	public void setCurrentStatus(Integer currentStatus) {
+	public void setCurrentStatus(int currentStatus) {
 		this.currentStatus = currentStatus;
 	}
 
@@ -234,7 +234,7 @@ public class OrderMain implements Serializable {
 	 * 
 	 * @return 当前步骤状态
 	 */
-	public Integer getCurrentStatus() {
+	public int getCurrentStatus() {
 		return this.currentStatus;
 	}
 
@@ -263,7 +263,7 @@ public class OrderMain implements Serializable {
 	 * @param isFinished
 	 *            订单是否结束
 	 */
-	public void setIsFinished(Integer isFinished) {
+	public void setIsFinished(int isFinished) {
 		this.isFinished = isFinished;
 	}
 
@@ -272,7 +272,7 @@ public class OrderMain implements Serializable {
 	 * 
 	 * @return 订单是否结束
 	 */
-	public Integer getIsFinished() {
+	public int getIsFinished() {
 		return this.isFinished;
 	}
 

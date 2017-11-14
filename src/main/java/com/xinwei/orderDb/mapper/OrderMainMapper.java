@@ -1,5 +1,7 @@
 package com.xinwei.orderDb.mapper;
 
+import java.util.Date;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,9 +27,14 @@ public interface OrderMainMapper {
 			+ "update_time=#{updateTime}, is_finished=#{isFinished} , flow_id = #{flowId} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
 	int update(OrderMain record);
 
-	@Update("UPDATE order_main SET current_step=#{step}, current_status=#{status} WHERE order_id=#{orderId} and partition_id=#{partitionId}")
+	@Update("UPDATE order_main SET current_step=#{step}, current_status=#{status},update_time=now() WHERE order_id=#{orderId} and partition_id=#{partitionId} and flow_id = #{flowId}")
 	int updateMainOrderStatus(@Param("orderId") String orderId, @Param("status") int status,
 			@Param("step") String step);
+
+	
+	@Update("UPDATE order_main SET current_step=#{step}, current_status=#{status},update_time=#{updateTime} WHERE order_id=#{orderId} and partition_id=#{partitionId} and flow_id = #{flowId}")
+	int updateMainOrderStatusByFlowId(@Param("orderId") String orderId, @Param("status") int status,
+			@Param("step") String step,@Param("updateTime") Date updateTime,@Param("flowId") String flowId);
 
 	@Select("select partition_id as partitionId, order_id as orderId, catetory,parent_order_id as parentOrderId, parent_order_category as parentOrderCategory, "
 			+ "owner_key as ownerKey,current_step as currentStep, current_status as currentStatus, "

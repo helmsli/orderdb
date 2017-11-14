@@ -25,7 +25,7 @@ public class OrderFlowDef implements Serializable {
 	/** 订单ID生成规则. */
 	private String orderidCategory;
 
-	/** 部署id. */
+	/* **/
 	private String deployId;
 
 	/** 总共的步骤信息. */

@@ -421,7 +421,7 @@ public class OrderServiceImpl implements OrderService {
 			orderFlowMapper.insert(nextOrderFlow);
 		}
 
-		if (preOrderFlow.getCurrentStatus().equals(OrderFlow.STATUS_running)) {
+		if (preOrderFlow.getCurrentStatus()==(OrderFlow.STATUS_running)) {
 			orderFlowMapper.deleteOrderFlow(preOrderFlow.getOrderId(), preOrderFlow.getPartitionId(),
 					preOrderFlow.getStepId(), preOrderFlow.getFlowId());
 		}
@@ -435,14 +435,8 @@ public class OrderServiceImpl implements OrderService {
 		ProcessResult processResult = new ProcessResult();
 		Date date = new Date(System.currentTimeMillis());
 		try {
-
-			OrderMain orderMain = new OrderMain();
-			orderMain.setOrderId(orderFlow.getOrderId());
-			orderMain.setFlowId(orderFlow.getFlowId());
-			orderMain.setUpdateTime(date);
-			orderMain.setFlowId(orderFlow.getFlowId());
-			orderMain.setCurrentStatus(orderFlow.getCurrentStatus());
-			int result = orderMainMapper.update(orderMain);
+			orderFlow.setUpdateTime(date);
+			int result = orderFlowMapper.updateStatus(orderFlow);
 			if (result != 1) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 				return processResult;

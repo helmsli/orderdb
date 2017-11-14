@@ -60,7 +60,7 @@ public class OrderFlow implements Serializable {
 	private String retryTimes;
 
 	/** 当前步骤状态. */
-	private Integer currentStatus;
+	private int currentStatus;
 
 	/** 错误和描述. */
 	private String retCode;
@@ -272,7 +272,7 @@ public class OrderFlow implements Serializable {
 	 * @param currentStatus
 	 *            当前步骤状态
 	 */
-	public void setCurrentStatus(Integer currentStatus) {
+	public void setCurrentStatus(int currentStatus) {
 		this.currentStatus = currentStatus;
 	}
 
@@ -281,7 +281,7 @@ public class OrderFlow implements Serializable {
 	 * 
 	 * @return 当前步骤状态
 	 */
-	public Integer getCurrentStatus() {
+	public int getCurrentStatus() {
 		return this.currentStatus;
 	}
 

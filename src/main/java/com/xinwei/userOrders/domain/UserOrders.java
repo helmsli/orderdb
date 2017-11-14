@@ -24,7 +24,7 @@ public class UserOrders implements Serializable {
 	private String ownerKey;
 
 	/** 当前步骤状态. */
-	private Integer currentStatus;
+	private int currentStatus;
 
 	/** 创建时间. */
 	private Date createTime;
@@ -98,7 +98,7 @@ public class UserOrders implements Serializable {
 	 * @param currentStatus
 	 *            当前步骤状态
 	 */
-	public void setCurrentStatus(Integer currentStatus) {
+	public void setCurrentStatus(int currentStatus) {
 		this.currentStatus = currentStatus;
 	}
 
@@ -107,7 +107,7 @@ public class UserOrders implements Serializable {
 	 * 
 	 * @return 当前步骤状态
 	 */
-	public Integer getCurrentStatus() {
+	public int getCurrentStatus() {
 		return this.currentStatus;
 	}
 
