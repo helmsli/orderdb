@@ -1,6 +1,9 @@
 package com.xinwei.orderDb.domain;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+
+import org.springframework.util.StringUtils;
 
 /**
  * Model class of order_context__data.
@@ -9,7 +12,8 @@ import java.io.Serializable;
  * @version $Id$
  */
 public class OrderContextData implements Serializable {
-
+	 private  final String DEFAULT_CHARSET = "utf-8";
+		
 	/** serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
@@ -30,6 +34,9 @@ public class OrderContextData implements Serializable {
 
 	/** 订单上下文数据. */
 	private String contextData;
+	
+	private transient byte[] contextDatablob;
+	
 
 	/**
 	 * Constructor.
@@ -150,6 +157,33 @@ public class OrderContextData implements Serializable {
 	 */
 	public String getContextData() {
 		return this.contextData;
+	}
+
+	
+	public byte[] getContextDataBlob() {
+		try {
+			if(!StringUtils.isEmpty(this.getContextData()))
+			{
+				return getContextData().getBytes(DEFAULT_CHARSET);
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+	}
+
+	public void setContextDataBlob(byte[] contextDatablob) {
+		try {
+			if(contextDatablob!=null)
+			{
+				this.setContextData(new String(contextDatablob, DEFAULT_CHARSET));
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
