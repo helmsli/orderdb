@@ -34,7 +34,9 @@ public class OrderFlow implements Serializable {
 
 	/** 订单编号. */
 	private String orderId;
-
+	/** 订单类型. */
+	private String catetory;
+	
 	/** 订单业务关键字. */
 	private String ownerKey;
 
@@ -321,6 +323,15 @@ public class OrderFlow implements Serializable {
 	 */
 	public String getRetMsg() {
 		return this.retMsg;
+	}
+
+	
+	public String getCatetory() {
+		return catetory;
+	}
+
+	public void setCatetory(String catetory) {
+		this.catetory = catetory;
 	}
 
 	@Override

@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableAutoConfiguration
 @EnableTransactionManagement
-@MapperScan({"com.xinwei.orderDb.mapper","com.xinwei.userOrders.mapper"})
-@ComponentScan("com.xinwei.orderDb, com.xinwei.userOrders")
+@MapperScan({"com.xinwei.orderDb.mapper","com.xinwei.userOrders.mapper","com.company.userOrder.mapper"})
+@ComponentScan("com.xinwei.orderDb, com.xinwei.userOrders,com.company.userOrder")
 
 // @ImportResource ({ "classpath:hessian/hessian-client.xml",
 // "classpath:hessian/hessian-server.xml" })

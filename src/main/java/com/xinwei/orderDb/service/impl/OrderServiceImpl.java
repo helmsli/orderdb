@@ -1,5 +1,7 @@
 package com.xinwei.orderDb.service.impl;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,9 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.xinwei.nnl.common.domain.ProcessResult;
 import com.xinwei.nnl.common.util.JsonUtil;
@@ -49,6 +55,8 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private UserOrdersMapper userOrdersMapper;
 
+	private Logger log = LoggerFactory.getLogger(getClass());
+	 
 	/**
 	 * 创建一个不带上下文的订单
 	 * 
@@ -170,6 +178,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 
 		}
@@ -212,6 +221,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 
 		}
@@ -243,6 +253,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 
 		}
@@ -274,6 +285,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 
 		}
@@ -298,6 +310,7 @@ public class OrderServiceImpl implements OrderService {
 			for (String contextKey : contextKeys) {
 				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(orderId,
 						contextKey.trim());
+				log.debug(orderContextData.toString());
 				resultMap.put(contextKey, orderContextData.getContextData());
 
 			}
@@ -311,6 +324,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 		}
 
@@ -361,6 +375,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 		}
 
@@ -430,6 +445,17 @@ public class OrderServiceImpl implements OrderService {
 		return processResult;
 	}
 
+	protected void saveExceptionToResult(ProcessResult processResult,Exception e)
+	{
+		StringWriter errors = new StringWriter();
+		e.printStackTrace(new PrintWriter(errors));
+		String errorStr = errors.toString();
+		if(!StringUtils.isEmpty(errorStr))
+		{
+			processResult.setRetMsg(errorStr.substring(0,1000));
+		}
+		return ;
+	}
 	@Override
 	public ProcessResult updateStepStatus(OrderFlow orderFlow) {
 		ProcessResult processResult = new ProcessResult();
@@ -447,6 +473,7 @@ public class OrderServiceImpl implements OrderService {
 			// TODO: handle exception
 			e.printStackTrace();
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			saveExceptionToResult(processResult,e);
 		}
 
 		return processResult;
@@ -474,6 +501,7 @@ public class OrderServiceImpl implements OrderService {
 			// TODO: handle exception
 			e.printStackTrace();
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			saveExceptionToResult(processResult,e);
 		}
 		return processResult;
 	}
@@ -500,6 +528,7 @@ public class OrderServiceImpl implements OrderService {
 			// TODO: handle exception
 			e.printStackTrace();
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			saveExceptionToResult(processResult,e);
 		}
 		return processResult;
 	}
@@ -527,6 +556,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 		}
 		return processResult;
@@ -549,6 +579,7 @@ public class OrderServiceImpl implements OrderService {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+			saveExceptionToResult(processResult,e);
 			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
 		}
 		return processResult;

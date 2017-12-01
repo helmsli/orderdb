@@ -9,7 +9,17 @@ import java.io.Serializable;
  * @version $Id$
  */
 public class OrderFlowDef implements Serializable {
+	
+	/**
+	 * 创建订单是否自动提交到用户中心
+	 */
+	public static final String DeployId_constTime = "constTime";
 
+	public static final String DeployId_systemTime = "systemTime";
+
+	public static final String DeployId_noAutoDeploy = "noAutoDeploy";
+
+	
 	/** serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 

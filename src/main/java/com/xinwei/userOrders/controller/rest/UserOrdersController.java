@@ -1,6 +1,10 @@
 package com.xinwei.userOrders.controller.rest;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +58,17 @@ public class UserOrdersController {
 		ProcessResult processResult = userOrdersService.deleteUserOrders(orderId);
 
 		return processResult;
+	}
+	protected void saveExceptionToResult(ProcessResult processResult,Exception e)
+	{
+		StringWriter errors = new StringWriter();
+		e.printStackTrace(new PrintWriter(errors));
+		String errorStr = errors.toString();
+		if(!StringUtils.isEmpty(errorStr))
+		{
+			processResult.setRetMsg(errorStr.substring(0,1000));
+		}
+		return ;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.xinwei.orderDb.domain;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.util.StringUtils;
 
 /**
@@ -33,9 +34,9 @@ public class OrderContextData implements Serializable {
 	private String flowId;
 
 	/** 订单上下文数据. */
-	private String contextData;
+	private String contextData=null;
 	
-	private transient byte[] contextDatablob;
+	private transient byte[] contextDatablob=null;
 	
 
 	/**
@@ -156,6 +157,18 @@ public class OrderContextData implements Serializable {
 	 * @return 订单上下文数据
 	 */
 	public String getContextData() {
+		if(this.contextData==null)
+		{
+			try {
+				if(contextDatablob!=null)
+				{
+				return (new String(contextDatablob, DEFAULT_CHARSET));
+				}
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return this.contextData;
 	}
 
@@ -178,8 +191,10 @@ public class OrderContextData implements Serializable {
 		try {
 			if(contextDatablob!=null)
 			{
-				this.setContextData(new String(contextDatablob, DEFAULT_CHARSET));
+				//this.setContextData(new String(contextDatablob, DEFAULT_CHARSET));
+				this.contextData=new String(contextDatablob, DEFAULT_CHARSET);
 			}
+			this.contextDatablob=contextDatablob;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -188,8 +203,7 @@ public class OrderContextData implements Serializable {
 
 	@Override
 	public String toString() {
-		return "OrderContextData [partitionId=" + partitionId + ", orderId=" + orderId + ", dataKey=" + dataKey
-				+ ", stepId=" + stepId + ", flowId=" + flowId + ", contextData=" + contextData + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }

@@ -15,10 +15,10 @@ public interface OrderFlowMapper {
 	//
 	//增加查询接口按时间排序
 	@Insert(" insert into order_flow (partition_id, order_id, owner_key," + "step_id, flow_id, create_time,"
-			+ " update_time, data_key, context_data," + " retry_times, current_status, ret_code, ret_msg)"
+			+ " update_time, data_key, context_data," + " retry_times, current_status, ret_code, ret_msg,catetory)"
 			+ " values (#{partitionId}, #{orderId}, #{ownerKey}," + " #{stepId}, #{flowId}, #{createTime},"
 			+ " #{updateTime}, #{dataKey}, #{contextData},"
-			+ " #{retryTimes}, #{currentStatus}, #{retCode}, #{retMsg})")
+			+ " #{retryTimes}, #{currentStatus}, #{retCode}, #{retMsg},#{catetory})")
 	int insert(OrderFlow record);
 
 	@Update(" UPDATE order_flow SET owner_key=#{ownerKey}," + "create_time=#{createTime},"

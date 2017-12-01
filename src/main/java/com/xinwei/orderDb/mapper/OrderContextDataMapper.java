@@ -18,7 +18,7 @@ public interface OrderContextDataMapper {
 
 	@Select("select partition_id as partitionId, order_id as orderId, data_key as dataKey, "
 			+ "step_id as stepId, flow_id as flowId, context_data as contextDataBlob "
-			+ "from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
+			+ " from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
 	OrderContextData selectByOrderIdAndDataKey(@Param("orderId") String orderId, @Param("dataKey") String dataKey);
 
 	@Select("select count(*) from order_context__data where order_id=#{orderId} and data_key=#{dataKey}")
