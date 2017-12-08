@@ -65,7 +65,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -91,7 +91,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -127,7 +127,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -150,7 +150,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -179,7 +179,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -203,7 +203,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -230,7 +230,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 		}
 		return processResult;
 	}
@@ -254,7 +254,7 @@ public class OrderDbController {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			processResult.setRetCode(OrderDbConst.RESULT_HandleException);
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, processResult);
 
 		}
 		return processResult;
@@ -283,31 +283,52 @@ public class OrderDbController {
 	@RequestMapping(method = RequestMethod.GET, value = "{category}/{ownerKey}/getOrderStepDef")
 	public ProcessResult getOrderStepDef(@PathVariable String category) {
 
-		ProcessResult processResult = orderService.getOrderStepDef(category);
-		toJsonProcessResult(processResult);
-		return processResult;
+		try {
+			ProcessResult processResult = orderService.getOrderStepDef(category);
+			toJsonProcessResult(processResult);
+			return processResult;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, null);
+
+		}
 	}
 
 	
 	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/selectOrderFlow")
 	public ProcessResult selectOrderFlow(@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody JsonRequest jsonRequest) {
-		String partitonId = OrderMain.getDbId(orderId);
-		String jString = jsonRequest.getJsonString();
-		Map<String, String> jsonMap = JsonUtil.fromJson(jString);
-		String stepId = jsonMap.get("stepId");
-		String flowId = jsonMap.get("flowId");
-		ProcessResult processResult = orderService.selectOrderFlow(orderId, partitonId, stepId, flowId);
-		toJsonProcessResult(processResult);
-		return processResult;
+		try {
+			String partitonId = OrderMain.getDbId(orderId);
+			String jString = jsonRequest.getJsonString();
+			Map<String, String> jsonMap = JsonUtil.fromJson(jString);
+			String stepId = jsonMap.get("stepId");
+			String flowId = jsonMap.get("flowId");
+			ProcessResult processResult = orderService.selectOrderFlow(orderId, partitonId, stepId, flowId);
+			toJsonProcessResult(processResult);
+			return processResult;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, null);
+
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/test")
 	public ProcessResult testFlow(@PathVariable String category, @PathVariable String dbId,
 			@PathVariable String orderId, @RequestBody JsonRequest jsonRequest) {
-		ProcessResult processResult = new ProcessResult();
-		processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
-		return processResult;
+		try {
+			ProcessResult processResult = new ProcessResult();
+			processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
+			return processResult;
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, OrderDbConst.RESULT_HandleException, null);
+
+		}
 	}
 
 	protected void toJsonProcessResult(ProcessResult processResult) {
