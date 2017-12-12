@@ -310,9 +310,11 @@ public class OrderServiceImpl implements OrderService {
 			for (String contextKey : contextKeys) {
 				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(orderId,
 						contextKey.trim());
-				log.debug(orderContextData.toString());
-				resultMap.put(contextKey, orderContextData.getContextData());
-
+				if(orderContextData!=null)
+				{
+					log.debug(orderContextData.toString());
+					resultMap.put(contextKey, orderContextData.getContextData());
+				}
 			}
 			if (resultMap.size() == 0) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
@@ -338,6 +340,7 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	@Override
 	// 事物控制
+	@Transactional
 	public ProcessResult putContextData(String orderId, Map<String, String> contextDatas) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
