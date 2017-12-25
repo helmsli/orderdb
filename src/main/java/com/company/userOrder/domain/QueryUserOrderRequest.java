@@ -12,8 +12,8 @@ public class QueryUserOrderRequest extends QueryPageRequest {
 	 */
 	private static final long serialVersionUID = 1578752993197351755L;
 	private Date startCreateTime;
-	private Date endCreateTime;
-	private String userid;
+	private Date endCreateTime=Calendar.getInstance().getTime();
+	private String userId;
 	private String category;
 	private int status=STATUS_NULL;
 	public Date getStartCreateTime() {
@@ -29,11 +29,11 @@ public class QueryUserOrderRequest extends QueryPageRequest {
 	public void setEndCreateTime(Date endCreateTime) {
 		this.endCreateTime = formatDate(endCreateTime);
 	}
-	public String getUserid() {
-		return userid;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUserId(String userid) {
+		this.userId = userid;
 	}
 	public int getStatus() {
 		return status;
@@ -63,7 +63,7 @@ public class QueryUserOrderRequest extends QueryPageRequest {
 	@Override
 	public String toString() {
 		return "QueryUserOrderRequest [startCreateTime=" + startCreateTime + ", endCreateTime=" + endCreateTime
-				+ ", userid=" + userid + ", category=" + category + ", status=" + status + "]";
+				+ ", userId=" + userId + ", category=" + category + ", status=" + status + "]";
 	}
 	
 }

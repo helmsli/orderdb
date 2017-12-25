@@ -103,18 +103,17 @@ public class UserOrder implements Serializable {
 	public String getOrderData() {
 		if(orderData==null)
 		{
-			try {
-				if(this.orderDataByte!=null)
-				{
-					return new String(orderDataByte, DEFAULT_CHARSET);
-					
+			if(this.orderDataByte!=null)
+			{
+				try {
+					this.setOrderData(new String(orderDataByte, DEFAULT_CHARSET));
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+ 
 			}
 		}
-		
 		return orderData;
 	}
 
@@ -179,7 +178,7 @@ public class UserOrder implements Serializable {
 		try {
 			if(orderDataByte!=null)
 			{
-				this.orderData=new String(orderDataByte, DEFAULT_CHARSET);
+				this.setOrderData(new String(orderDataByte, DEFAULT_CHARSET));
 			}
 			this.orderDataByte=orderDataByte;
 		} catch (UnsupportedEncodingException e) {

@@ -18,6 +18,7 @@ import com.xinwei.nnl.common.domain.ProcessResult;
 import com.xinwei.nnl.common.util.JsonUtil;
 
 
+
 @RestController
 @RequestMapping("/userOrderDb")
 public class UserOrderController {
@@ -53,10 +54,8 @@ public class UserOrderController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			if(!StringUtils.isEmpty(e.getMessage()))
-			{
-				processResult.setRetMsg(e.getMessage().substring(0,128));
-			}
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
 		}
 		return processResult;
 	}
@@ -81,10 +80,8 @@ public class UserOrderController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			if(!StringUtils.isEmpty(e.getMessage()))
-			{
-				processResult.setRetMsg(e.getMessage().substring(0,128));
-			}
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
 		}
 		return processResult;
 	}
@@ -108,10 +105,8 @@ public class UserOrderController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			if(!StringUtils.isEmpty(e.getMessage()))
-			{
-				processResult.setRetMsg(e.getMessage().substring(0,128));
-			}
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
 		}
 		return processResult;
 	}
@@ -135,10 +130,8 @@ public class UserOrderController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			if(!StringUtils.isEmpty(e.getMessage()))
-			{
-				processResult.setRetMsg(e.getMessage().substring(0,128));
-			}
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
 		}
 		return processResult;
 	}
@@ -162,10 +155,25 @@ public class UserOrderController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			if(!StringUtils.isEmpty(e.getMessage()))
-			{
-				processResult.setRetMsg(e.getMessage().substring(0,128));
-			}
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
+		}
+		return processResult;
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryOneOrder")
+	public ProcessResult queryOneUserOrder(@PathVariable String category, @PathVariable String userid,
+			@RequestBody UserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			processResult = userOrderDbService.selByUserOrderId(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+			
 		}
 		return processResult;
 	}

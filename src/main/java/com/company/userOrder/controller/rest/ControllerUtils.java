@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-
 import com.xinwei.nnl.common.domain.ProcessResult;
 import com.xinwei.nnl.common.util.JsonUtil;
 
@@ -44,7 +43,8 @@ public class ControllerUtils {
 	}
 	
 	public static ProcessResult getErrorResponse(int errorCode,String errorMsg)
-	{		
+	{
+		
 		ProcessResult processResult = new ProcessResult();
 		
 		processResult.setRetCode(errorCode);
@@ -56,6 +56,18 @@ public class ControllerUtils {
 		{
 			processResult.setRetMsg(errorMsg);
 		}
+		return processResult;
+	}
+	
+	public static ProcessResult getSuccessResponse(ProcessResult processResult)
+	{
+		
+		if(processResult==null)
+		{
+			processResult = new ProcessResult();
+		}
+		processResult.setRetCode(0);
+		
 		return processResult;
 	}
 	
