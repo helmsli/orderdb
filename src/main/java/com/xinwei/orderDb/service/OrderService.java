@@ -41,7 +41,7 @@ public interface OrderService {
 	 * @param status
 	 * @return
 	 */
-	public ProcessResult updateMainOrderStatus(String orderId, int status, String step);
+	public ProcessResult updateMainOrderStatus(String category,String orderId, int status, String step);
 
 	/**
 	 * 
@@ -58,14 +58,16 @@ public interface OrderService {
 	 * @return -- 返回Map
 	 */
 
-	public ProcessResult getContextData(String orderId, List<String> contextKey);
-
+	
+	
+	public ProcessResult getContextData(String category,String orderId, List<String> contextKey);
+	
 	/**
 	 * 
 	 * @param contextDatas
 	 * @return
 	 */
-	public ProcessResult putContextData(String orderId, Map<String, String> contextDatas);
+	public ProcessResult putContextData(String category,String orderId, Map<String, String> contextDatas);
 
 	/**
 	 * 
@@ -113,7 +115,7 @@ public interface OrderService {
 	 * @param orderId
 	 * @return
 	 */
-	public ProcessResult getOrderMainFromDb(String orderId);
+	public ProcessResult getOrderMainFromDb(String category,String orderId);
 	
 	/**
 	 * 
@@ -124,5 +126,5 @@ public interface OrderService {
 	 * @param flowId
 	 * @return
 	 */
-	public ProcessResult selectOrderFlow(String orderId, String partitonId, String stepId, String flowId);
+	public ProcessResult selectOrderFlow(String category,String orderId, String partitonId, String stepId, String flowId);
 }

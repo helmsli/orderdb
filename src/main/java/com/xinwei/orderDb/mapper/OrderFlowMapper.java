@@ -24,20 +24,20 @@ public interface OrderFlowMapper {
 	@Update(" UPDATE order_flow SET owner_key=#{ownerKey}," + "create_time=#{createTime},"
 			+ " update_time=#{updateTime}, data_key=#{dataKey}, context_data=#{contextData},"
 			+ " retry_times=#{retryTimes}, current_status=#{currentStatus}, ret_code=#{retCode}, ret_msg=#{retMsg}"
-			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
+			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId} and catetory=#{catetory}")
 	int update(OrderFlow orderFlow);
 
 	@Update(" UPDATE order_flow SET"
 			+ " update_time=#{updateTime},current_status=#{currentStatus}, ret_code=#{retCode}, ret_msg=#{retMsg}"
-			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
+			+ " where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId} and catetory=#{catetory}")
 	int updateStatus(OrderFlow orderFlow);
 
 	
-	@Select("select * from order_flow where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
-	OrderFlow selectOrderFlow(@Param("orderId") String orderId, @Param("partitionId") String partitionId,
+	@Select("select * from order_flow where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId} and catetory=#{catetory}")
+	OrderFlow selectOrderFlow(@Param("catetory") String catetory,@Param("orderId") String orderId, @Param("partitionId") String partitionId,
 			@Param("stepId") String stepId, @Param("flowId") String flowId);
 	
-	@Delete("delete from order_flow where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId}")
-	int deleteOrderFlow(@Param("orderId") String orderId, @Param("partitionId") String partitionId,
+	@Delete("delete from order_flow where order_id=#{orderId} and partition_id=#{partitionId} and step_id=#{stepId} and flow_id=#{flowId} and catetory=#{catetory}")
+	int deleteOrderFlow(@Param("catetory") String catetory,@Param("orderId") String orderId, @Param("partitionId") String partitionId,
 			@Param("stepId") String stepId, @Param("flowId") String flowId);
 }

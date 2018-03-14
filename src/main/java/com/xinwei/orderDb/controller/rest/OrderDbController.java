@@ -48,7 +48,7 @@ public class OrderDbController {
 	 * @param contextDatas
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/addOrderMain")
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/addOrderMain")
 	public ProcessResult addOrderMain(@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody OrderMainContext orderMainContext) {
 		ProcessResult processResult = new ProcessResult();
@@ -71,6 +71,8 @@ public class OrderDbController {
 		return processResult;
 	}
 
+	
+	
 	/**
 	 * 
 	 * 用于执行步骤过程中，步骤没有发生跳转，仅仅更新步骤运行的结果
@@ -80,12 +82,12 @@ public class OrderDbController {
 	 * @param orderFlow
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/configOrderFlow")
-	public ProcessResult configOrderFlow(@PathVariable String dbId, @PathVariable String orderId,
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/configOrderFlow")
+	public ProcessResult configOrderFlow(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody OrderFlow orderFlow) {
 		ProcessResult processResult = new ProcessResult();
 		try {
-
+			orderFlow.setCatetory(category);
 			processResult = orderService.configOrderFlow(orderFlow);
 			//toJsonProcessResult(processResult);
 		} catch (Exception e) {
@@ -106,8 +108,8 @@ public class OrderDbController {
 	 *            -- 第一个 orderflow为老的流程信息，第二个orderflow为新的流程信息。 第一个订单必须填写状态，步骤，流程id，
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/stepjumping")
-	public ProcessResult stepJumping(@PathVariable String dbId, @PathVariable String orderId,
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/stepjumping")
+	public ProcessResult stepJumping(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody StepJumpingRequest stepJumpingRequest) {
 		ProcessResult processResult = new ProcessResult();
 		try {
@@ -118,6 +120,8 @@ public class OrderDbController {
 			 */
 			OrderFlow preOrderFlow = stepJumpingRequest.getPreOrderFlow();
 			OrderFlow nextOrderFlow = stepJumpingRequest.getNextOrderFlow();
+			preOrderFlow.setCatetory(category);
+			nextOrderFlow.setCatetory(category);
 			int nextOrderAutoRun = stepJumpingRequest.getNextOrderAutoRun();
 			int preOrderAutoRun = stepJumpingRequest.getPreOrderAutoRun();
 
@@ -140,12 +144,12 @@ public class OrderDbController {
 	 * @param orderId
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/getOrderMainFromDb")
-	public ProcessResult getOrderMainFromDb(@PathVariable String dbId, @PathVariable String orderId) {
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/getOrderMainFromDb")
+	public ProcessResult getOrderMainFromDb(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId) {
 		ProcessResult processResult = new ProcessResult();
 		try {
 
-			processResult = orderService.getOrderMainFromDb(orderId);
+			processResult = orderService.getOrderMainFromDb(category,orderId);
 			this.toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -165,7 +169,7 @@ public class OrderDbController {
 	 *            --其中仅仅flowID，和状态id起作用。
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/updateStepStatus")
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/updateStepStatus")
 	public ProcessResult updateStepStatus(@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody OrderFlow orderFlow) {
 		ProcessResult processResult = new ProcessResult();
@@ -193,7 +197,7 @@ public class OrderDbController {
 	 * @param orderMain
 	 * @return 
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/updateMainOrder")
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/updateMainOrder")
 	public ProcessResult updateMainOrder(@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody OrderMainContext orderMain) {
 		ProcessResult processResult = new ProcessResult();
@@ -218,14 +222,14 @@ public class OrderDbController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/getContextData")
-	public ProcessResult getContextData(@PathVariable String dbId, @PathVariable String orderId,
+	public ProcessResult getContextData(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody JsonRequest jsonRequest) {
 		ProcessResult processResult = new ProcessResult();
 		try {
 			String jsonString = jsonRequest.getJsonString();
 			List<String> jsonList = JsonUtil.fromJson(jsonString, new TypeToken<List<String>>() {}.getType());
 			
-			processResult = orderService.getContextData(orderId, jsonList);
+			processResult = orderService.getContextData(category,orderId, jsonList);
 			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -243,13 +247,13 @@ public class OrderDbController {
 	 * @param contextDatas
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/putContextData")
-	public ProcessResult putContextData(@PathVariable String dbId, @PathVariable String orderId,
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/putContextData")
+	public ProcessResult putContextData(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody OrderMainContext orderMainContext) {
 		ProcessResult processResult = new ProcessResult();
 		try {
 
-			processResult = orderService.putContextData(orderId, orderMainContext.getContextDatas());
+			processResult = orderService.putContextData(category,orderId, orderMainContext.getContextDatas());
 			toJsonProcessResult(processResult);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -296,8 +300,8 @@ public class OrderDbController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST, value = "{dbId}/{orderId}/selectOrderFlow")
-	public ProcessResult selectOrderFlow(@PathVariable String dbId, @PathVariable String orderId,
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{dbId}/{orderId}/selectOrderFlow")
+	public ProcessResult selectOrderFlow(@PathVariable String category,@PathVariable String dbId, @PathVariable String orderId,
 			@RequestBody JsonRequest jsonRequest) {
 		try {
 			String partitonId = OrderMain.getDbId(orderId);
@@ -305,7 +309,7 @@ public class OrderDbController {
 			Map<String, String> jsonMap = JsonUtil.fromJson(jString);
 			String stepId = jsonMap.get("stepId");
 			String flowId = jsonMap.get("flowId");
-			ProcessResult processResult = orderService.selectOrderFlow(orderId, partitonId, stepId, flowId);
+			ProcessResult processResult = orderService.selectOrderFlow(category,orderId, partitonId, stepId, flowId);
 			toJsonProcessResult(processResult);
 			return processResult;
 		} catch (Exception e) {

@@ -116,7 +116,8 @@
 			<artifactId>hessian</artifactId>
 			<version>4.0.38</version>
 		</dependency>
-		<!--引入lib目录中的第三方包 <dependency> <groupId>com</groupId> <artifactId>security_access_service</artifactId> 
+		<!--引入lib目录中的第三方包
+		<dependency> <groupId>com</groupId> <artifactId>security_access_service</artifactId> 
 			<version>1.0</version> <scope>system</scope> <systemPath>${basedir}/lib/security_access_service.jar</systemPath> 
 			</dependency> -->
 	</dependencies>

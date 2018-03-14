@@ -2,7 +2,6 @@ package com.xinwei.orderDb.service.impl;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,14 +10,12 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.xinwei.nnl.common.domain.ProcessResult;
-import com.xinwei.nnl.common.util.JsonUtil;
 import com.xinwei.orderDb.Const.OrderDbConst;
 import com.xinwei.orderDb.domain.OrderContextData;
 import com.xinwei.orderDb.domain.OrderFlow;
@@ -31,8 +28,7 @@ import com.xinwei.orderDb.mapper.OrderFlowMapper;
 import com.xinwei.orderDb.mapper.OrderFlowStepdefMapper;
 import com.xinwei.orderDb.mapper.OrderMainMapper;
 import com.xinwei.orderDb.service.OrderService;
-import com.xinwei.userOrders.domain.UserOrders;
-import com.xinwei.userOrders.mapper.UserOrdersMapper;
+import com.xinwei.userOrder.mapper.UserOrderMapper;
 
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
@@ -53,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
 	private OrderFlowStepdefMapper orderFlowStepdefMapper;
 
 	@Autowired
-	private UserOrdersMapper userOrdersMapper;
+	private UserOrderMapper userOrdersMapper;
 
 	private Logger log = LoggerFactory.getLogger(getClass());
 	 
@@ -68,18 +64,10 @@ public class OrderServiceImpl implements OrderService {
 	public ProcessResult createNewOrder(OrderMain orderMain) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
-		/*
-		UserOrders userOrders = new UserOrders();
-		userOrders.setCatetory(orderMain.getCatetory());
-		userOrders.setCreateTime(new Date());
-		userOrders.setCurrentStatus(orderMain.getCurrentStatus());
-		userOrders.setOrderId(orderMain.getOrderId());
-		userOrders.setOwnerKey(orderMain.getOwnerKey());
-		userOrdersMapper.insertUserOrders(userOrders);
-		 */
-		//selectCountOrderMain
+		
 		int result=0;
-		int record = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());
+		int record = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId(),
+				orderMain.getCatetory());
 		if(record==0)
 		{
 			Date date = new Date(System.currentTimeMillis());
@@ -115,7 +103,8 @@ public class OrderServiceImpl implements OrderService {
 		ProcessResult processResult = new ProcessResult();
 		Date date = new Date(System.currentTimeMillis());
 
-		int records = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId());
+		int records = orderMainMapper.selectCountOrderMain(orderMain.getOrderId(), orderMain.getPartitionId(),
+				orderMain.getCatetory());
 		if(records==0)
 		{
 			orderMain.setCreatTime(date);
@@ -141,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
 
 		// if (result == 1) {
 		if (contextDatas != null) {
-			this.putContextData(orderMain.getOrderId(), contextDatas);
+			this.putContextData(orderMain.getCatetory(),orderMain.getOrderId(), contextDatas);
 		}
 		// }
 
@@ -203,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
 			if (result != 1) {
 				if (result == 0) {
 					// 如果查询不存在，执行插入
-					OrderMain queryOrderMain = orderMainMapper.selectOrderMain(orderMain.getOrderId(),
+					OrderMain queryOrderMain = orderMainMapper.selectOrderMain(orderMain.getCatetory(),orderMain.getOrderId(),
 							orderMain.getPartitionId());
 					if (queryOrderMain == null) {
 						orderMain.setCreatTime(Calendar.getInstance().getTime());
@@ -235,13 +224,13 @@ public class OrderServiceImpl implements OrderService {
 	 * @return
 	 */
 	@Override
-	public ProcessResult updateMainOrderStatus(String orderId, int status, String step) {
+	public ProcessResult updateMainOrderStatus(String category,String orderId, int status, String step) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
 
 		try {
 
-			int result = orderMainMapper.updateMainOrderStatus(orderId, status, step);
+			int result = orderMainMapper.updateMainOrderStatus(category,orderId, status, step);
 
 			if (result != 1) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
@@ -299,7 +288,7 @@ public class OrderServiceImpl implements OrderService {
 	 * @return -- 返回Map
 	 */
 	@Override
-	public ProcessResult getContextData(String orderId, List<String> contextKeys) {
+	public ProcessResult getContextData(String category,String orderId, List<String> contextKeys) {
 		// TODO Auto-generated method stub
 
 		Map<String, String> resultMap = new HashMap<>();
@@ -308,7 +297,7 @@ public class OrderServiceImpl implements OrderService {
 		try {
 
 			for (String contextKey : contextKeys) {
-				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(orderId,
+				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(category,orderId,
 						contextKey.trim());
 				if(orderContextData!=null)
 				{
@@ -341,7 +330,7 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	// 事物控制
 	@Transactional
-	public ProcessResult putContextData(String orderId, Map<String, String> contextDatas) {
+	public ProcessResult putContextData(String category,String orderId, Map<String, String> contextDatas) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
 		int result1 = 0;
@@ -355,7 +344,8 @@ public class OrderServiceImpl implements OrderService {
 				orderContextData.setFlowId("0");
 				orderContextData.setOrderId(orderId);
 				orderContextData.setStepId("0");
-				int records = orderContextDataMapper.selectCount(orderId, dataKey);
+				orderContextData.setCategory(category);
+				int records = orderContextDataMapper.selectCount(category,orderId, dataKey);
 				if(records==0)
 				{
 					result1 = orderContextDataMapper.insert(orderContextData);
@@ -404,7 +394,7 @@ public class OrderServiceImpl implements OrderService {
 		/*
 		 * 先去更新，判断更新结果
 		 */
-		OrderMain orderMain = orderMainMapper.selectOrderMain(orderId, preOrderFlow.getPartitionId());
+		OrderMain orderMain = orderMainMapper.selectOrderMain(preOrderFlow.getCatetory(),orderId, preOrderFlow.getPartitionId());
 		orderMain.setUpdateTime(date);
 		orderMain.setFlowId(nextOrderFlow.getFlowId());
 		orderMain.setCurrentStatus(nextOrderFlow.getCurrentStatus());
@@ -440,7 +430,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 
 		if (preOrderFlow.getCurrentStatus()==(OrderFlow.STATUS_running)) {
-			orderFlowMapper.deleteOrderFlow(preOrderFlow.getOrderId(), preOrderFlow.getPartitionId(),
+			orderFlowMapper.deleteOrderFlow(preOrderFlow.getCatetory(),preOrderFlow.getOrderId(), preOrderFlow.getPartitionId(),
 					preOrderFlow.getStepId(), preOrderFlow.getFlowId());
 		}
 		processResult.setRetCode(OrderDbConst.RESULT_SUCCESS);
@@ -544,12 +534,12 @@ public class OrderServiceImpl implements OrderService {
 	 * 根據orderId查詢orderMain
 	 */
 	@Override
-	public ProcessResult getOrderMainFromDb(String orderId) {
+	public ProcessResult getOrderMainFromDb(String category,String orderId) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
 		try {
 			String partitionId = orderId.substring(orderId.length() - 7, orderId.length() - 4);
-			OrderMain orderMain = orderMainMapper.selectOrderMain(orderId, partitionId);
+			OrderMain orderMain = orderMainMapper.selectOrderMain(category,orderId, partitionId);
 			if (orderMain == null) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 				return processResult;
@@ -566,13 +556,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public ProcessResult selectOrderFlow(String orderId, String partitonId, String stepId, String flowId) {
+	public ProcessResult selectOrderFlow(String category,String orderId, String partitonId, String stepId, String flowId) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
 		try {
 			String partitionId = OrderMain.getDbId(orderId);
 
-			OrderFlow orderFlow = orderFlowMapper.selectOrderFlow(orderId, partitionId, stepId, flowId);
+			OrderFlow orderFlow = orderFlowMapper.selectOrderFlow(category,orderId, partitionId, stepId, flowId);
 			if (orderFlow == null) {
 				processResult.setRetCode(OrderDbConst.RESULT_Error_DbError);
 				return processResult;

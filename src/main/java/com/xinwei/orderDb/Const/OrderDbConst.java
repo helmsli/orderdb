@@ -29,6 +29,15 @@ public class OrderDbConst {
      * 操作异常
      */
     public static final int RESULT_HandleException = 6003;
+    
+//    public static final String SCARTCH_ADMIN = "scratchAdmin";
+    
+//    public static final String SCARTCH_CATEGORY_AGENT = "CardAgent";
+//    public static final String SCARTCH_CATEGORY_ADMIN = "CardManager";
+    
+//    public static String SCRATCHCARD_CATEGORY = "scratchCard";
+    
+//    public static String SCRATCHCARD_ADMINORDER_CATEGORY = "SellerCard";
 //    /**
 //     * 角色不存在
 //     */

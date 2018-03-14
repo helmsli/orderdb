@@ -55,7 +55,8 @@ CREATE TABLE order_context__data
 后5位到后7位XXX是按照一定的规则进行分区的；
 yyyyyyyXXXUUUU
 其中yyyyyyy是变长的。',
-	data_key varchar(64),
+catetory varchar(32),
+data_key varchar(64),
 	step_id varchar(32),
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程',
@@ -79,7 +80,8 @@ CREATE TABLE order_flow
 yyyyyyyXXXUUUU
 其中yyyyyyy是变长的。',
 	-- 订单归属关键字，比如买家订单，则需要保存买家的用户ID
-	owner_key varchar(128) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
+catetory varchar(32),	
+owner_key varchar(128) COMMENT '订单归属关键字，比如买家订单，则需要保存买家的用户ID',
 	step_id varchar(32),
 	-- 标识一个订单中的具体流程
 	flow_id varchar(128) COMMENT '标识一个订单中的具体流程',
@@ -259,3 +261,5 @@ CREATE INDEX index_id ON user_orders (order_id ASC, current_status ASC, create_t
 
 
 
+alter table order_context__data add category varchar(32) ;
+alter table order_flow add catetory varchar(32) ;

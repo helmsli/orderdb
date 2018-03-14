@@ -33,6 +33,8 @@ public class OrderContextData implements Serializable {
 	/** 流程ID. */
 	private String flowId;
 
+	
+	private String category;
 	/** 订单上下文数据. */
 	private String contextData=null;
 	
@@ -82,6 +84,16 @@ public class OrderContextData implements Serializable {
 	 */
 	public String getOrderId() {
 		return this.orderId;
+	}
+
+	
+	
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	/**
