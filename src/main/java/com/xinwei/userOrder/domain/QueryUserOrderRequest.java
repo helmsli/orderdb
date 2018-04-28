@@ -10,11 +10,21 @@ public class QueryUserOrderRequest extends QueryPageRequest {
 	 */
 	private static final long serialVersionUID = 1578752993197351755L;
 	private Date startCreateTime;
-	private Date endCreateTime = Calendar.getInstance().getTime();
+	private Date endCreateTime;
 	private String userId;
 	private String category;
 	private int status = STATUS_NULL;
-
+	
+	public QueryUserOrderRequest()
+	{
+		Calendar now = Calendar.getInstance();
+		this.setEndCreateTime(now.getTime());
+		now.add(Calendar.MONTH, -6);
+		this.setStartCreateTime(now.getTime());
+	}
+	
+	
+	
 	public Date getStartCreateTime() {
 		return startCreateTime;
 	}

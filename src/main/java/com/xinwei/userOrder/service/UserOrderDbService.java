@@ -15,6 +15,15 @@ public interface UserOrderDbService {
 	 */
 	public ProcessResult selOrdersByUser(QueryUserOrderRequest queryUserOrderRequest);
 	
+	
+	/**
+	 * 按照用户查询所有用户
+	 * @param queryUserOrderRequest
+	 * @return
+	 */
+	public ProcessResult selOrdersByUserOrderIdAsc(QueryUserOrderRequest queryUserOrderRequest);
+	
+	
 	/**
 	 * 按照userid,orderId查询订单信息
 	 * @param queryUserOrderRequest

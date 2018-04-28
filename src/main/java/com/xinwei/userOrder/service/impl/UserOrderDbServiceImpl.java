@@ -30,6 +30,27 @@ public class UserOrderDbServiceImpl implements UserOrderDbService {
 		return processResult;
 	}
 
+	
+	@Override
+	public ProcessResult selOrdersByUserOrderIdAsc(QueryUserOrderRequest queryUserOrderRequest) {
+		ProcessResult processResult = getDefaultErrorResult();
+		PageHelper.startPage(queryUserOrderRequest.getPageNum(), queryUserOrderRequest.getPageSize());
+		List<UserOrder> list =null;
+		if(!StringUtils.isEmpty(queryUserOrderRequest.getUserId()))
+		{
+			list = userOrderMapper.selOrdersByUserOrderIdAsc(queryUserOrderRequest.getCategory(),
+				queryUserOrderRequest.getStartCreateTime(), queryUserOrderRequest.getEndCreateTime(),
+				queryUserOrderRequest.getUserId());
+		}
+		
+		PageInfo pageInfo = new PageInfo(list);
+		processResult.setResponseInfo(pageInfo);
+		processResult.setRetCode(UserOrderConst.RESULT_SUCCESS);
+		
+		return processResult;
+	}
+
+	
 	@Override
 	public ProcessResult selOrdersByUser(QueryUserOrderRequest queryUserOrderRequest) {
 		ProcessResult processResult = getDefaultErrorResult();

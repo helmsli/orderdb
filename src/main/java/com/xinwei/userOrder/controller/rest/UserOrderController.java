@@ -54,7 +54,68 @@ public class UserOrderController {
 		}
 		return processResult;
 	}
+	/**
+	 * 查询没有时间变化的固定的数据
+	 * @param category
+	 * @param userid
+	 * @param queryUserOrderRequest
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryUserOrderConst")
+	public ProcessResult queryUserAllOrderConst(@PathVariable String category, @PathVariable String userid,
+			@RequestBody QueryUserOrderRequest queryUserOrderRequest) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			queryUserOrderRequest.setEndCreateTime(UserOrder.getConstCreateDate());
+			queryUserOrderRequest.setStartCreateTime(UserOrder.getConstCreateDate());
+			queryUserOrderRequest.setCategory(category);
+			if (queryUserOrderRequest.getStatus() == QueryUserOrderRequest.STATUS_NULL) {
+				processResult = userOrderDbService.selOrdersByUser(queryUserOrderRequest);
+			} else {
+				processResult = userOrderDbService.selOrderByUserStatus(queryUserOrderRequest);
 
+			}
+
+//			 toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
+
+	
+	/**
+	 * 从数据库查询用户一段时间内所有状态的订单
+	 * 
+	 * @param category
+	 * @param userid
+	 * @param queryUserOrderRequest
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryUserOrderidAsc")
+	public ProcessResult queryUserAllOrderIdAsc(@PathVariable String category, @PathVariable String userid,
+			@RequestBody QueryUserOrderRequest queryUserOrderRequest) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			queryUserOrderRequest.setCategory(category);
+			if (queryUserOrderRequest.getStatus() == QueryUserOrderRequest.STATUS_NULL) {
+				processResult = userOrderDbService.selOrdersByUserOrderIdAsc(queryUserOrderRequest);
+			}
+//			 toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
+	
 	/**
 	 * 按照状态从数据库查询用户一段时间内的订单
 	 * 
@@ -80,7 +141,8 @@ public class UserOrderController {
 		}
 		return processResult;
 	}
-
+	
+	
 	/**
 	 * 配置用户订单，没有插入，有更新
 	 * 
@@ -104,6 +166,23 @@ public class UserOrderController {
 		}
 		return processResult;
 	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/configUserOrderConst")
+	public ProcessResult configUserOrderConst(@PathVariable String category, @PathVariable String userid,
+			@RequestBody UserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			userOrder.setConstCreateTime();
+			processResult = userOrderDbService.configureUserOrder(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+		}
+		return processResult;
+	}
 	/**
 	 * 更新用户订单状态
 	 * 
@@ -118,6 +197,32 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			processResult = userOrderDbService.updateUserOrderStatus(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
+
+	/**
+	 * 更新用户订单状态
+	 * 
+	 * @param category
+	 * @param userid
+	 * @param userOrder
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/updateUserOrderStatusConst")
+	public ProcessResult updateUserOrderStatusConst(@PathVariable String category, @PathVariable String userid,
+			@RequestBody UserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			userOrder.setConstCreateTime();
 			processResult = userOrderDbService.updateUserOrderStatus(userOrder);
 			toJsonSimpleProcessResult(processResult);
 		} catch (Exception e) {
@@ -154,6 +259,23 @@ public class UserOrderController {
 		return processResult;
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/delUserOrderConst")
+	public ProcessResult delUserOrderConst(@PathVariable String category, @PathVariable String userid,
+			@RequestBody UserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			userOrder.setConstCreateTime();
+			processResult = userOrderDbService.delUserOrder(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
 	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryOneOrder")
 	public ProcessResult queryOneUserOrder(@PathVariable String category, @PathVariable String userid,
 			@RequestBody UserOrder userOrder) {
@@ -170,7 +292,25 @@ public class UserOrderController {
 		}
 		return processResult;
 	}
-	
+
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryOneOrderConst")
+	public ProcessResult queryOneUserOrderConst(@PathVariable String category, @PathVariable String userid,
+			@RequestBody UserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			userOrder.setConstCreateTime();
+			processResult = userOrderDbService.selByUserOrderId(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
+
 
 	protected void toJsonSimpleProcessResult(ProcessResult processResult) {
 		Object object = processResult.getResponseInfo();

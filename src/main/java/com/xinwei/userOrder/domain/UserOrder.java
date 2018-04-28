@@ -146,7 +146,7 @@ public class UserOrder implements Serializable {
 	 * 
 	 * @return
 	 */
-	public Date getConstCreateDate() {
+	public static Date getConstCreateDate() {
 		Calendar calenCreate = Calendar.getInstance();
 		calenCreate.set(2017, 11, 30, 0, 0, 0);
 		calenCreate.set(Calendar.MILLISECOND, 0);
