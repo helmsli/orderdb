@@ -3,6 +3,14 @@ package com.xinwei.number.service;
 import com.xinwei.nnl.common.domain.ProcessResult;
 
 public interface UserAmountService {
+	public static final int Error_Default = -2;
+	public static final int Error_Exception = -1;
+	public static final int Error_update=1;
+	public static final int Haved_Counter = 255;
+	public static final int Success_Counter=0;
+	
+	
+	
 	/**
 	 * 插入计数记录
 	 * @param userId
@@ -25,7 +33,7 @@ public interface UserAmountService {
 	 * @param amountId
 	 * @return
 	 */
-	public boolean addOne(String userId, String amountId, String ownerKey);
+	public int addOne(String userId, String amountId, String ownerKey);
 
 	/**
 	 * 给用户计数值+addAmount

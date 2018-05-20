@@ -15,6 +15,7 @@ import com.xinwei.number.util.RepeatControlUtil;
 
 @Service("userAmountService")
 public class UserAmountServiceImpl implements UserAmountService {
+	
 	private static final Logger logger = LoggerFactory.getLogger(UserAmountServiceImpl.class);
 
 	@Autowired
@@ -39,12 +40,13 @@ public class UserAmountServiceImpl implements UserAmountService {
 
 	@Override
 	@Transactional
-	public boolean addOne(String userId, String amountId, String ownerKey) {
+	
+	public int addOne(String userId, String amountId, String ownerKey) {
 
 		/**
 		 * useramountLog 首先向Log表中插入记录，userID，AmountID，key，如果成功了，addOne，如果失败，查询log表中是否存在，如果已经存在，返回成功
 		 */
-		int ret = 0;
+		int ret = UserAmountService.Error_Default;
 		// 用户计数统计key
 		String numberKey = RepeatControlUtil.getNumberKey(userId, amountId, ownerKey);
 		try {
@@ -52,7 +54,7 @@ public class UserAmountServiceImpl implements UserAmountService {
 			// number 已经被使用, 不能再用
 			if (!RepeatControlUtil.canAddCount(numberKey)) {
 				logger.info("can't operate again...");
-				return true;
+				return UserAmountService.Haved_Counter;
 			}
 			ret = userAmountLogMapper.insert(userId, amountId, ownerKey);
 			ret = userAmountMapper.addOne(userId, amountId);
@@ -64,7 +66,13 @@ public class UserAmountServiceImpl implements UserAmountService {
 			if(ret>0)
 			{
 				RepeatControlUtil.addCount(numberKey);
+				return UserAmountService.Success_Counter;
 			}
+			else
+			{
+				return UserAmountService.Error_update;
+			}
+			
 		} 
 		catch(RuntimeException e)
 		{
@@ -72,20 +80,22 @@ public class UserAmountServiceImpl implements UserAmountService {
 		}
 		
 		catch (Exception e) {
+			
 			e.printStackTrace();
 			try {
 				// userAmountLogMapper.insert 重复插入出错
 				long amount = userAmountLogMapper.selectCount(userId, amountId, ownerKey);
 				if (amount > 0) {
 					RepeatControlUtil.addCount(numberKey);
-					return true;
+					return UserAmountService.Haved_Counter;
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+			
 		}
 
-		return ret > 0;
+		return UserAmountService.Error_Exception;
 	}
 
 	@Override

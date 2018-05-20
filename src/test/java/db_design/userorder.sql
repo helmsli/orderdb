@@ -1,4 +1,36 @@
 
+CREATE TABLE useramount
+(
+	userId varchar(128),
+	amountId varchar(128) COMMENT 'counter id',
+	amount bigint,	
+	createTime timestamp not null default current_timestamp 
+) ENGINE = InnoDB;
+CREATE UNIQUE  INDEX index_useramount_id1 ON useramount(userId ASC,amountId ASC);
+
+
+CREATE TABLE useramountlog
+(
+	userId varchar(128),
+	amountId varchar(128) COMMENT 'counter id',
+	ownerKey varchar(128), 
+	amount bigint,	
+	createTime timestamp not null default current_timestamp 
+) ENGINE = InnoDB;
+CREATE UNIQUE  INDEX index_useramountlog_id1 ON useramountlog(userId ASC,amountId ASC,ownerKey ASC);
+
+
+CREATE TABLE useramount
+(
+	userId varchar(128),
+	amountId varchar(128) COMMENT 'counter id',
+	amount bigint,	
+	createTime timestamp not null default current_timestamp 
+) ENGINE = InnoDB;
+CREATE INDEX index_useramount_id1 ON useramount(userId ASC,amountId ASC);
+  
+
+
 CREATE TABLE userOrder
 (
 	createTime datetime,

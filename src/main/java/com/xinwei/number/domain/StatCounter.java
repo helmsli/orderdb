@@ -1,6 +1,8 @@
 package com.xinwei.number.domain;
 
-public class StatCounter {
+import java.io.Serializable;
+
+public class StatCounter implements Serializable {
 
 	private String userId;
 	private String amountId;

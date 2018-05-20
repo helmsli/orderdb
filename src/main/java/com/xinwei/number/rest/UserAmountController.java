@@ -17,7 +17,7 @@ import com.xinwei.userOrder.controller.rest.ControllerUtils;
 
 
 @RestController
-@RequestMapping("userStatCounter")
+@RequestMapping("/userStatCounter")
 public class UserAmountController {
 	private static final Logger logger = LoggerFactory.getLogger(UserAmountController.class);
 
@@ -61,7 +61,7 @@ public class UserAmountController {
 	 * @return
 	 */
 	@GetMapping("{category}/{userId}/{amountId}/getAmount")
-	public ProcessResult getAmount(@PathVariable("userId") String userId, @PathVariable("amountId") String amountId) {
+	public ProcessResult getAmount(@PathVariable("category") String category,@PathVariable("userId") String userId, @PathVariable("amountId") String amountId) {
 		ProcessResult result = new ProcessResult();
 		try {
 			long amount = userAmountService.getAmount(userId, amountId);
@@ -87,19 +87,16 @@ public class UserAmountController {
 	 * @return
 	 */
 	@PostMapping("{category}/plusOne")
-	public ProcessResult plusOne(@RequestBody StatCounter statCounter) {
+	public ProcessResult plusOne(@PathVariable("category") String category,@RequestBody StatCounter statCounter) {
 		ProcessResult result = new ProcessResult();
 		try {
-			boolean ret = userAmountService.addOne(statCounter.getUserId(), statCounter.getAmountId(), statCounter.getOwnerKey());
-			if (!ret) {
-				result.setRetCode(-1);
-			} else {
-				result.setRetCode(0);
-			}
+			int ret = userAmountService.addOne(statCounter.getUserId(), statCounter.getAmountId(), statCounter.getOwnerKey());
+			result.setRetCode(ret);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			ControllerUtils.getFromResponse(e, -1, result);
+			ControllerUtils.getFromResponse(e, UserAmountService.Error_Exception, result);
 		}
 	
 		return result;
@@ -115,8 +112,8 @@ public class UserAmountController {
 	 * @param ownerKey
 	 * @return
 	 */
-	@GetMapping("{category}/plusGreaterOne")
-	public ProcessResult plusGreaterOne(@RequestBody StatCounter statCounter) {
+	@PostMapping("{category}/plusGreaterOne")
+	public ProcessResult plusGreaterOne(@PathVariable("category") String category,@RequestBody StatCounter statCounter) {
 		ProcessResult result=null;
 		try {
 			result = userAmountService.add(statCounter.getUserId(), statCounter.getAmountId(), statCounter.getAmount(), statCounter.getOwnerKey());
@@ -139,7 +136,7 @@ public class UserAmountController {
 	 * @return
 	 */
 	@PostMapping("{category}/substractOne")
-	public ProcessResult substractOne(@RequestBody StatCounter statCounter) {
+	public ProcessResult substractOne(@PathVariable("category") String category,@RequestBody StatCounter statCounter) {
 		ProcessResult result = new ProcessResult();
 		try {
 			boolean ret = userAmountService.substractOne(statCounter.getUserId(), statCounter.getAmountId(), statCounter.getOwnerKey());
@@ -168,7 +165,7 @@ public class UserAmountController {
 	 * @return
 	 */
 	@PostMapping("{category}/substractGreaterOne")
-	public ProcessResult substract(@RequestBody StatCounter statCounter) {
+	public ProcessResult substract(@PathVariable("category") String category,@RequestBody StatCounter statCounter) {
 		ProcessResult result=null;
 		try {
 			result = userAmountService.substract(statCounter.getUserId(), statCounter.getAmountId(), statCounter.getAmount(), statCounter.getOwnerKey());
