@@ -2,6 +2,7 @@ package com.xinwei.number.domain;
 
 import java.io.Serializable;
 
+
 public class StatCounter implements Serializable {
 
 	private String userId;
@@ -38,6 +39,11 @@ public class StatCounter implements Serializable {
 	}
 	public void setMaxAmount(int maxAmount) {
 		this.maxAmount = maxAmount;
+	}
+	@Override
+	public String toString() {
+		return "StatCounter [userId=" + userId + ", amountId=" + amountId + ", ownerKey=" + ownerKey + ", amount="
+				+ amount + ", maxAmount=" + maxAmount + "]";
 	}
 
 }

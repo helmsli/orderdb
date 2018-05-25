@@ -120,6 +120,7 @@ public class UserAmountController {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 			ControllerUtils.getFromResponse(e, -1, result);
 		}
 		
