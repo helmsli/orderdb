@@ -62,6 +62,9 @@
 			<groupId>com.xinwei.nnl</groupId>
 			<artifactId>nnl-commons</artifactId>
 			<version>1.9.1</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/nnl-commons-1.9.1.jar</systemPath>
+			
 		</dependency>
 
 
