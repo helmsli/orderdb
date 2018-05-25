@@ -3,6 +3,7 @@ package com.xinwei.number.domain;
 import java.io.Serializable;
 
 
+
 public class StatCounter implements Serializable {
 
 	private String userId;
