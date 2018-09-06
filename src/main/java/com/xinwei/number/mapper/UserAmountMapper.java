@@ -18,6 +18,11 @@ public interface UserAmountMapper {
 	@Select("select amount from useramount where userId=#{userId} and amountId=#{amountId}")
 	public long selectAmount(@Param("userId") String userId, @Param("amountId") String amountId);
 
+	@Select("select count(*) from useramount where userId=#{userId} and amountId=#{amountId}")
+	public int countAmount(@Param("userId") String userId, @Param("amountId") String amountId);
+
+	
+	
 	@Select("select userId,amountId,amount from useramount where userId=#{userId}")
 	public List<StatCounter> selectUserAmountList(@Param("userId") String userId);
 

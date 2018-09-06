@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 /**
@@ -16,6 +18,8 @@ import org.springframework.util.StringUtils;
  */
 public class OrderFlowStepdef implements Serializable {
 
+	 private Logger logger = LoggerFactory.getLogger(getClass());
+	 
 	static public final String Step_out_Default="default";
 	/** serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -152,6 +156,7 @@ public class OrderFlowStepdef implements Serializable {
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("system.exit",e);
 			System.out.println("init StepJumpDefs error .system  will exit(0):" + this.toString() + ":" + strStr);
 			System.exit(0);
 		}

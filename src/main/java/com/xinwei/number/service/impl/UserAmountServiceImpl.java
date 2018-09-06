@@ -33,7 +33,17 @@ public class UserAmountServiceImpl implements UserAmountService {
 
 	@Override
 	public long getAmount(String userId, String amountId) {
-		long amount = userAmountMapper.selectAmount(userId, amountId);
+		long amount=0;
+		try {
+			amount = userAmountMapper.selectAmount(userId, amountId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			int count = userAmountMapper.countAmount(userId, amountId);
+			if(count==0)
+			{
+				return 0;
+			}
+		}
 		logger.info("get amount, amount=" + amount);
 		return amount;
 	}

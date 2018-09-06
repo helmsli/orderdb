@@ -295,9 +295,10 @@ public class OrderServiceImpl implements OrderService {
 		ProcessResult processResult = new ProcessResult();
 
 		try {
-
+			OrderMain orderMain= new OrderMain();
+			orderMain.setOrderId(orderId);
 			for (String contextKey : contextKeys) {
-				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(category,orderId,
+				OrderContextData orderContextData = orderContextDataMapper.selectByOrderIdAndDataKey(orderMain.getPartitionId(),category,orderId,
 						contextKey.trim());
 				if(orderContextData!=null)
 				{
@@ -329,7 +330,7 @@ public class OrderServiceImpl implements OrderService {
 	 */
 	@Override
 	// 事物控制
-	@Transactional
+	
 	public ProcessResult putContextData(String category,String orderId, Map<String, String> contextDatas) {
 		// TODO Auto-generated method stub
 		ProcessResult processResult = new ProcessResult();
@@ -345,7 +346,7 @@ public class OrderServiceImpl implements OrderService {
 				orderContextData.setOrderId(orderId);
 				orderContextData.setStepId("0");
 				orderContextData.setCategory(category);
-				int records = orderContextDataMapper.selectCount(category,orderId, dataKey);
+				int records = orderContextDataMapper.selectCount(orderContextData.getPartitionId(),category,orderId, dataKey);
 				if(records==0)
 				{
 					result1 = orderContextDataMapper.insert(orderContextData);
@@ -354,7 +355,7 @@ public class OrderServiceImpl implements OrderService {
 				{
 					result1=orderContextDataMapper.updateOrderContextData(orderContextData);
 				}
-				if (result1 == 1) {
+				if (result1 >= 1) {
 					result2++;
 				}
 			}

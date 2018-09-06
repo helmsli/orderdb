@@ -2,6 +2,7 @@ package com.xinwei.userOrder.controller.rest;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.xinwei.nnl.common.domain.ProcessResult;
 import com.xinwei.nnl.common.util.JsonUtil;
 import com.xinwei.orderDb.Const.UserOrderConst;
+import com.xinwei.userOrder.domain.QueryUserOrder;
 import com.xinwei.userOrder.domain.QueryUserOrderRequest;
 import com.xinwei.userOrder.domain.UserOrder;
 import com.xinwei.userOrder.service.UserOrderDbService;
@@ -157,6 +159,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			processResult = userOrderDbService.configureUserOrder(userOrder);
 			toJsonSimpleProcessResult(processResult);
 		} catch (Exception e) {
@@ -197,6 +204,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			processResult = userOrderDbService.updateUserOrderStatus(userOrder);
 			toJsonSimpleProcessResult(processResult);
 		} catch (Exception e) {
@@ -222,6 +234,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			userOrder.setConstCreateTime();
 			processResult = userOrderDbService.updateUserOrderStatus(userOrder);
 			toJsonSimpleProcessResult(processResult);
@@ -248,6 +265,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			processResult = userOrderDbService.delUserOrder(userOrder);
 			toJsonSimpleProcessResult(processResult);
 		} catch (Exception e) {
@@ -265,6 +287,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			userOrder.setConstCreateTime();
 			processResult = userOrderDbService.delUserOrder(userOrder);
 			toJsonSimpleProcessResult(processResult);
@@ -282,6 +309,11 @@ public class UserOrderController {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			processResult = userOrderDbService.selByUserOrderId(userOrder);
 			toJsonSimpleProcessResult(processResult);
 		} catch (Exception e) {
@@ -293,12 +325,41 @@ public class UserOrderController {
 		return processResult;
 	}
 
+	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryOneOrderDate")
+	public ProcessResult queryOneUserOrderString(@PathVariable String category, @PathVariable String userid,
+			@RequestBody QueryUserOrder userOrder) {
+		ProcessResult processResult = new ProcessResult();
+		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
+		try {
+			//避免查询是不同时区的差异
+			userOrder.setCreateTime(userOrder.getRequestDate());
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
+			processResult = userOrderDbService.selByUserOrderId(userOrder);
+			toJsonSimpleProcessResult(processResult);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ControllerUtils.getFromResponse(e, UserOrderConst.RESULT_FAILURE, null);
+
+		}
+		return processResult;
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "{category}/{userid}/queryOneOrderConst")
 	public ProcessResult queryOneUserOrderConst(@PathVariable String category, @PathVariable String userid,
 			@RequestBody UserOrder userOrder) {
 		ProcessResult processResult = new ProcessResult();
 		processResult.setRetCode(UserOrderConst.RESULT_FAILURE);
 		try {
+			if(StringUtils.isEmpty(userOrder.getUserId()))
+			{
+				processResult.setRetMsg("userid is null.");
+				return processResult;
+			}
 			userOrder.setConstCreateTime();
 			processResult = userOrderDbService.selByUserOrderId(userOrder);
 			toJsonSimpleProcessResult(processResult);
